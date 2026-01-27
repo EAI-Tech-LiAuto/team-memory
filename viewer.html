@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文档查看器</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -48,6 +47,7 @@
             text-decoration: none;
             font-size: 0.9em;
             margin-top: 10px;
+            transition: all 0.3s ease;
         }
 
         .back-button:hover {
@@ -164,6 +164,21 @@
             padding: 100px;
             color: #999;
         }
+
+        .error {
+            text-align: center;
+            padding: 100px;
+            color: #d32f2f;
+        }
+
+        .debug-info {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -177,19 +192,41 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
     <script>
+        // 简单的markdown转HTML函数（如果marked.js加载失败）
+        function simpleMarkdown(text) {
+            return text
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+                .replace(/\*(.*)\*/gim, '<em>$1</em>')
+                .replace(/\n/gim, '<br>');
+        }
+
         // 获取URL参数
         const urlParams = new URLSearchParams(window.location.search);
         const file = urlParams.get('file');
 
+        const contentDiv = document.querySelector('.content');
+
         if (!file) {
-            document.querySelector('.content').innerHTML = '<p style="color: red; text-align: center; padding: 50px;">错误：未指定文档路径</p>';
+            contentDiv.innerHTML = '<div class="error">错误：未指定文档路径<br><small>URL应该包含?file=参数</small></div>';
         } else {
+            // 显示调试信息
+            let debugHtml = `<div class="debug-info">`;
+            debugHtml += `<strong>调试信息：</strong><br>`;
+            debugHtml += `请求的文件：${file}<br>`;
+            debugHtml += `当前页面URL：${window.location.href}<br>`;
+            debugHtml += `基础路径：${window.location.origin}${window.location.pathname}<br>`;
+            debugHtml += `</div>`;
+
             // 加载markdown文件
             fetch(file)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('文件加载失败');
+                        throw new Error(`HTTP错误！状态：${response.status}`);
                     }
                     return response.text();
                 })
@@ -213,7 +250,13 @@
                     }
 
                     // 渲染markdown
-                    const html = marked.parse(content);
+                    let html;
+                    if (typeof marked !== 'undefined' && marked.parse) {
+                        html = marked.parse(content);
+                    } else {
+                        console.warn('marked.js未加载，使用简单markdown解析');
+                        html = simpleMarkdown(content);
+                    }
 
                     // 构建元数据显示
                     let metadataHtml = '';
@@ -227,10 +270,11 @@
 
                     // 更新页面
                     document.getElementById('doc-title').textContent = metadata.topic || '文档查看';
-                    document.querySelector('.content').innerHTML = metadataHtml + html;
+                    contentDiv.innerHTML = metadataHtml + html;
                 })
                 .catch(error => {
-                    document.querySelector('.content').innerHTML = `<p style="color: red; text-align: center; padding: 50px;">错误：${error.message}</p>`;
+                    console.error('加载失败：', error);
+                    contentDiv.innerHTML = debugHtml + `<div class="error">加载失败：${error.message}<br><br><small>请检查文件路径是否正确，或在浏览器开发者工具中查看网络请求</small></div>`;
                 });
         }
     </script>
