@@ -214,16 +214,24 @@
         if (!file) {
             contentDiv.innerHTML = '<div class="error">错误：未指定文档路径<br><small>URL应该包含?file=参数</small></div>';
         } else {
+            // 处理文件路径，移除开头的 ./
+            let filePath = file.startsWith('./') ? file.substring(2) : file;
+
+            // 构建完整URL
+            const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            const fullUrl = baseUrl + filePath;
+
             // 显示调试信息
             let debugHtml = `<div class="debug-info">`;
             debugHtml += `<strong>调试信息：</strong><br>`;
-            debugHtml += `请求的文件：${file}<br>`;
+            debugHtml += `原始文件路径：${file}<br>`;
+            debugHtml += `处理后路径：${filePath}<br>`;
+            debugHtml += `完整URL：${fullUrl}<br>`;
             debugHtml += `当前页面URL：${window.location.href}<br>`;
-            debugHtml += `基础路径：${window.location.origin}${window.location.pathname}<br>`;
             debugHtml += `</div>`;
 
             // 加载markdown文件
-            fetch(file)
+            fetch(fullUrl)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP错误！状态：${response.status}`);
