@@ -1,6 +1,6 @@
 ---
 date: 2026-01-27
-author: lijun13
+author: 李君
 topic: Git共享记忆系统设计
 tags: [architecture, knowledge-management, collaboration, claude-code]
 related_files:

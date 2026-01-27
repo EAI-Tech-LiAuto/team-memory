@@ -1,6 +1,6 @@
 ---
 date: 2026-01-27
-author: lijun13
+author: 李君
 topic: 具身智能企业调研
 tags: [research, embodied-ai, companies, industry-analysis]
 related_files:
