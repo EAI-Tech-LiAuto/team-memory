@@ -44,6 +44,49 @@
             opacity: 0.9;
         }
 
+        .guide-banner {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .guide-banner-text {
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .guide-banner-text h3 {
+            margin-bottom: 5px;
+            font-size: 1.3em;
+        }
+
+        .guide-banner-text p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .guide-button {
+            background: white;
+            color: #4CAF50;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .guide-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -282,6 +325,14 @@
         <div class="header">
             <h1>🧠 团队共享记忆库</h1>
             <p>团队与Claude Code交流的集体智慧中心</p>
+        </div>
+
+        <div class="guide-banner">
+            <div class="guide-banner-text">
+                <h3>🚀 第一次使用？</h3>
+                <p>查看3分钟快速上手指南，小白也能轻松使用</p>
+            </div>
+            <a href="guide.html" class="guide-button">查看使用指南</a>
         </div>
 
         <div class="stats">
