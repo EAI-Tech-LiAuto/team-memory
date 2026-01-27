@@ -194,6 +194,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
     <script>
+        const VIEWER_VERSION = 'v1.2'; // 版本号，用于调试
+
         // 简单的markdown转HTML函数（如果marked.js加载失败）
         function simpleMarkdown(text) {
             return text
@@ -222,11 +224,12 @@
 
             // 显示调试信息
             let debugHtml = `<div class="debug-info">`;
-            debugHtml += `<strong>调试信息：</strong><br>`;
+            debugHtml += `<strong>调试信息 (Viewer ${VIEWER_VERSION})：</strong><br>`;
             debugHtml += `原始文件路径：${file}<br>`;
             debugHtml += `处理后路径：${filePath}<br>`;
             debugHtml += `GitHub Raw URL：${rawUrl}<br>`;
             debugHtml += `当前页面URL：${window.location.href}<br>`;
+            debugHtml += `页面加载时间：${new Date().toLocaleString()}<br>`;
             debugHtml += `</div>`;
 
             // 加载markdown文件
