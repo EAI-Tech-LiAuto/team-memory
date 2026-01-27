@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团队共享记忆库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 6px;
+            height: 30px;
+            background: #667eea;
+            margin-right: 15px;
+            border-radius: 3px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .card-date {
+            color: #999;
+            font-size: 0.9em;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .card-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-author::before {
+            content: '👤';
+            margin-right: 5px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .card-summary {
+            color: #666;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-link {
+            display: block;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .quick-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 团队共享记忆库</h1>
+            <p>团队与Claude Code交流的集体智慧中心</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">对话记录</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">主题文档</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">架构决策</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">贡献者</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <input type="text" class="search-box" placeholder="🔍 搜索对话、主题、标签...">
+
+            <div class="section">
+                <h2 class="section-title">📱 快速导航</h2>
+                <div class="quick-links">
+                    <a href="./topics/architecture/" class="quick-link">📐 架构决策</a>
+                    <a href="./topics/features/" class="quick-link">⚙️ 功能实现</a>
+                    <a href="./topics/debugging/" class="quick-link">🐛 调试经验</a>
+                    <a href="./topics/research/" class="quick-link">🔬 研究调研</a>
+                    <a href="./decisions/" class="quick-link">📋 决策记录</a>
+                    <a href="./workflows/" class="quick-link">🔄 工作流程</a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🆕 最新对话</h2>
+                <div class="cards">
+                    <div class="card" onclick="window.open('./conversations/2026-01/git-shared-memory-design.md')">
+                        <div class="card-header">
+                            <div class="card-title">Git共享记忆系统设计</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">lijun13</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">architecture</span>
+                            <span class="tag">knowledge-management</span>
+                            <span class="tag">collaboration</span>
+                            <span class="tag">claude-code</span>
+                        </div>
+                        <div class="card-summary">
+                            基于Git和Claude Code上下文机制，设计团队共享记忆系统。通过结构化存储对话记录和知识，实现团队"集体大脑"效果。
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="window.open('./conversations/2026-01/embodied-ai-research.md')">
+                        <div class="card-header">
+                            <div class="card-title">具身智能企业调研</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">lijun13</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">research</span>
+                            <span class="tag">embodied-ai</span>
+                            <span class="tag">companies</span>
+                            <span class="tag">industry-analysis</span>
+                        </div>
+                        <div class="card-summary">
+                            国内外具身智能领域主要企业调研。涵盖Tesla、Figure AI、宇树科技等企业，分析行业趋势：人形机器人、大模型融合、成本下降等。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">📊 主题分类</h2>
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-title">🔬 研究调研</div>
+                        <div class="card-summary" style="margin-top: 10px;">
+                            <strong>1篇文档</strong><br>
+                            • 具身智能企业调研
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📐 架构设计</div>
+                        <div class="card-summary" style="margin-top: 10px;">
+                            <strong>1篇文档</strong><br>
+                            • Git共享记忆系统架构
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">⚙️ 功能实现</div>
+                        <div class="card-summary" style="margin-top: 10px;">
+                            <strong>0篇文档</strong><br>
+                            待添加...
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🐛 调试经验</div>
+                        <div class="card-summary" style="margin-top: 10px;">
+                            <strong>0篇文档</strong><br>
+                            待添加...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">⏱️ 时间线</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">Git共享记忆系统设计</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">lijun13</div>
+                        </div>
+                        <div class="card-summary">
+                            设计了完整的团队知识管理方案，包括文件结构、工作流程、自动化脚本等。
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">具身智能企业调研</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">lijun13</div>
+                        </div>
+                        <div class="card-summary">
+                            完成国内外具身智能企业全景调研，识别行业趋势和中国企业机会。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🚀 团队共享记忆库 - 让知识流动起来</p>
+            <div class="footer-links">
+                <a href="./CLAUDE.md">使用指南</a>
+                <a href="https://github.com/your-org/team-memory" target="_blank">GitHub仓库</a>
+                <a href="./scripts/capture.bat">快速捕获脚本</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                💡 提示: 使用 <code>./scripts/capture.bat topic-name</code> 快速创建新对话记录
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 搜索功能
+        document.querySelector('.search-box').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 卡片点击效果
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.animation = 'pulse 0.3s ease';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

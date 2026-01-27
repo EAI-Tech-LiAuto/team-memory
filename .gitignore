@@ -1,0 +1,22 @@
+# 个人级文件（不提交到Git）
+*.local.md
+.claude/*.local.md
+.claude/*.local.json
+
+# 临时文件
+*.tmp
+*.log
+.DS_Store
+
+# IDE配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 草稿文件
+drafts/
+*-draft.md
+
+# 本地脚本输出
+scripts/output/
