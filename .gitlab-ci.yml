@@ -1,0 +1,20 @@
+# 部署到GitLab Pages
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "📦 准备部署到GitLab Pages..."
+    # 创建public目录
+    - mkdir -p public
+    # 复制所有文件到public
+    - cp -r * public/ 2>/dev/null || true
+    # 移除public中的public目录（避免递归）
+    - rm -rf public/public
+    - echo "✅ 部署完成！"
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - master
