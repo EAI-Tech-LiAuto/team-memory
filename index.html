@@ -337,11 +337,11 @@
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number">1</div>
+                <div class="stat-number">2</div>
                 <div class="stat-label">对话记录</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">1</div>
+                <div class="stat-number">7</div>
                 <div class="stat-label">主题文档</div>
             </div>
             <div class="stat-card">
@@ -360,18 +360,37 @@
             <div class="section">
                 <h2 class="section-title">📱 快速导航</h2>
                 <div class="quick-links">
+                    <a href="./topics/scenarios/" class="quick-link">🏠 应用场景</a>
+                    <a href="./topics/技术方案/" class="quick-link">🔧 技术方案</a>
+                    <a href="./topics/产品规划/" class="quick-link">📊 产品规划</a>
+                    <a href="./topics/供应链/" class="quick-link">🔗 供应链</a>
                     <a href="./topics/architecture/" class="quick-link">📐 架构决策</a>
-                    <a href="./topics/features/" class="quick-link">⚙️ 功能实现</a>
-                    <a href="./topics/debugging/" class="quick-link">🐛 调试经验</a>
-                    <a href="./topics/research/" class="quick-link">🔬 研究调研</a>
                     <a href="./decisions/" class="quick-link">📋 决策记录</a>
-                    <a href="./workflows/" class="quick-link">🔄 工作流程</a>
                 </div>
             </div>
 
             <div class="section">
                 <h2 class="section-title">🆕 最新对话</h2>
                 <div class="cards">
+                    <div class="card" onclick="window.open('./conversations/2026-01/home-service-robot-research.md')">
+                        <div class="card-header">
+                            <div class="card-title">家政机器人项目研究计划</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">李君</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">home-service</span>
+                            <span class="tag">robotics</span>
+                            <span class="tag">product-planning</span>
+                            <span class="tag">technical-research</span>
+                        </div>
+                        <div class="card-summary">
+                            基于两个月工作计划，针对家政机器人场景设计完整的产品方案。涵盖行业调研、技术选型、商业模式、供应链规划等核心内容。
+                        </div>
+                    </div>
+
                     <div class="card" onclick="window.open('./conversations/2026-01/git-shared-memory-design.md')">
                         <div class="card-header">
                             <div class="card-title">Git共享记忆系统设计</div>
@@ -397,32 +416,35 @@
             <div class="section">
                 <h2 class="section-title">📊 主题分类</h2>
                 <div class="cards">
-                    <div class="card">
-                        <div class="card-title">🔬 研究调研</div>
+                    <div class="card" onclick="window.open('./topics/scenarios/')">
+                        <div class="card-title">🏠 应用场景</div>
                         <div class="card-summary" style="margin-top: 10px;">
-                            <strong>0篇文档</strong><br>
-                            待添加...
+                            <strong>3篇文档</strong><br>
+                            • 地面清洁场景<br>
+                            • 物品整理场景<br>
+                            • 老人照护场景
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card" onclick="window.open('./topics/技术方案/')">
+                        <div class="card-title">🔧 技术方案</div>
+                        <div class="card-summary" style="margin-top: 10px;">
+                            <strong>2篇文档</strong><br>
+                            • 技术架构总览<br>
+                            • 人机交互安全
+                        </div>
+                    </div>
+                    <div class="card" onclick="window.open('./topics/产品规划/')">
+                        <div class="card-title">📊 产品规划</div>
+                        <div class="card-summary" style="margin-top: 10px;">
+                            <strong>1篇文档</strong><br>
+                            • 产品路线图与商业模式
+                        </div>
+                    </div>
+                    <div class="card" onclick="window.open('./topics/architecture/')">
                         <div class="card-title">📐 架构设计</div>
                         <div class="card-summary" style="margin-top: 10px;">
                             <strong>1篇文档</strong><br>
                             • Git共享记忆系统架构
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">⚙️ 功能实现</div>
-                        <div class="card-summary" style="margin-top: 10px;">
-                            <strong>0篇文档</strong><br>
-                            待添加...
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">🐛 调试经验</div>
-                        <div class="card-summary" style="margin-top: 10px;">
-                            <strong>0篇文档</strong><br>
-                            待添加...
                         </div>
                     </div>
                 </div>
@@ -431,6 +453,18 @@
             <div class="section">
                 <h2 class="section-title">⏱️ 时间线</h2>
                 <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">家政机器人项目研究计划</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">李君</div>
+                        </div>
+                        <div class="card-summary">
+                            基于PDF文档和家政机器人场景需求，设计了完整的两个月工作计划，包括行业调研、技术选型、商业模式、产品规划等。
+                        </div>
+                    </div>
                     <div class="timeline-item">
                         <div class="card-header">
                             <div class="card-title">Git共享记忆系统设计</div>
