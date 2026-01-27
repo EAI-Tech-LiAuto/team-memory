@@ -1,6 +1,6 @@
 ---
 date: 2026-01-27
-author: 理想汽车团队
+author: 郎博
 topic: 人形机器人1个月加速计划（工业+家用双场景）
 tags: [product-planning, dual-scenarios, industrial, home-service, accelerated-timeline]
 related_files:
