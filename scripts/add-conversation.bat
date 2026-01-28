@@ -154,7 +154,22 @@ if /i not "%edited%"=="y" (
 
 echo.
 echo ================================================
-echo    第4步：提交到团队库
+echo    第4步：自动更新网页
+echo ================================================
+echo.
+
+echo 🔄 正在自动更新网页内容...
+powershell -ExecutionPolicy Bypass -File scripts\update-index.ps1
+if errorlevel 1 (
+    echo.
+    echo ⚠️  自动更新失败，将使用现有网页配置
+    echo    不影响你的对话记录保存
+    echo.
+)
+
+echo.
+echo ================================================
+echo    第5步：提交到团队库
 echo ================================================
 echo.
 
