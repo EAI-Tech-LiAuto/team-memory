@@ -162,7 +162,7 @@ git config --global credential.helper cache
 
 1. 生成SSH密钥：
 ```bash
-ssh-keygen -t ed25519 -C "你的邮箱@liauto.com"
+ssh-keygen -t ed25519 -C "你的邮箱@lixiang.com"
 ```
 按3次回车（使用默认设置）
 

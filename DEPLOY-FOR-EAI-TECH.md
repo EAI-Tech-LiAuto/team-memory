@@ -18,7 +18,7 @@ git config --global user.email "你的邮箱@example.com"
 **示例**：
 ```bash
 git config --global user.name "EAI-Tech-LiAuto"
-git config --global user.email "admin@liauto.com"
+git config --global user.email "admin@lixiang.com"
 ```
 
 运行后，验证一下：
