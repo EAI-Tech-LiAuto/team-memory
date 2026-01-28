@@ -194,7 +194,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
     <script>
-        const VIEWER_VERSION = 'v1.2'; // 版本号，用于调试
+        const VIEWER_VERSION = 'v1.3'; // 版本号，用于调试 - 新增：自动重写.md链接
 
         // 简单的markdown转HTML函数（如果marked.js加载失败）
         function simpleMarkdown(text) {
@@ -281,6 +281,41 @@
                     // 更新页面
                     document.getElementById('doc-title').textContent = metadata.topic || '文档查看';
                     contentDiv.innerHTML = metadataHtml + html;
+
+                    // 重写所有.md文件的链接，使其指向viewer.html
+                    const links = contentDiv.querySelectorAll('a[href$=".md"]');
+                    links.forEach(link => {
+                        const href = link.getAttribute('href');
+                        // 如果是相对路径的.md文件
+                        if (href && !href.startsWith('http')) {
+                            // 计算完整路径
+                            let fullPath = href;
+
+                            // 处理相对路径：从当前文件所在目录开始计算
+                            if (href.startsWith('./') || href.startsWith('../')) {
+                                // 获取当前文件所在的目录
+                                const currentDir = filePath.substring(0, filePath.lastIndexOf('/'));
+
+                                // 解析相对路径
+                                const parts = currentDir.split('/');
+                                const hrefParts = href.split('/');
+
+                                hrefParts.forEach(part => {
+                                    if (part === '..') {
+                                        parts.pop();
+                                    } else if (part !== '.' && part !== '') {
+                                        parts.push(part);
+                                    }
+                                });
+
+                                fullPath = parts.join('/');
+                            }
+
+                            // 重写链接指向viewer.html
+                            link.setAttribute('href', `viewer.html?file=./${fullPath}`);
+                            link.setAttribute('target', '_self');
+                        }
+                    });
                 })
                 .catch(error => {
                     console.error('加载失败：', error);
