@@ -406,4 +406,4 @@ status: completed
 **相关文档：**
 - [家政机器人2个月研究计划](./home-service-robot-research.md)（李君）
 - [1个月加速计划（工业+家用双场景）](./one-month-accelerated-plan.md)（郎博）
-- [产品路线图](../topics/产品规划/home-robot-roadmap.md)
+- [产品路线图](../../topics/产品规划/home-robot-roadmap.md)

@@ -618,5 +618,5 @@ Day 26：预演与彩排
 
 **相关文档**：
 - [家政机器人2个月研究计划](./home-service-robot-research.md)
-- [产品路线图](../topics/产品规划/home-robot-roadmap.md)
-- [技术方案总览](../topics/技术方案/README.md)
+- [产品路线图](../../topics/产品规划/home-robot-roadmap.md)
+- [技术方案总览](../../topics/技术方案/README.md)
