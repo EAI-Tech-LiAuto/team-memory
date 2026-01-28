@@ -5,6 +5,7 @@
 ## 📚 快速导航
 
 ### 最近更新
+- 2026-01-28: 家用机器人全球领先企业分析 - [查看详情](./conversations/2026-01/home-robot-industry-analysis.md)
 - 2026-01-27: 具身智能企业调研 - [查看详情](./conversations/2026-01/embodied-ai-research.md)
 - 2026-01-27: Git共享记忆系统设计 - [查看详情](./conversations/2026-01/git-shared-memory-design.md)
 
@@ -85,7 +86,7 @@ refactor(scope): 简短描述 by @author # 重构知识结构
 
 ## 📊 统计信息
 
-- 对话记录: 2 篇
+- 对话记录: 3 篇
 - 主题文档: 1 篇
 - 架构决策: 0 个
 - 贡献者: 1 人
