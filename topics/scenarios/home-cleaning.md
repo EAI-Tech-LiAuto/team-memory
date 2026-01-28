@@ -89,5 +89,5 @@
 ## 相关链接
 
 - [家政机器人项目研究](../../conversations/2026-01/home-service-robot-research.md)
-- [导航与避障技术方案](../技术方案/navigation.md)
-- [机械臂操作方案](../技术方案/manipulation.md)
+- 导航与避障技术方案（待补充）
+- 机械臂操作方案（待补充）
