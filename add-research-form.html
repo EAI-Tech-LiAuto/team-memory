@@ -265,11 +265,6 @@
                     <textarea id="keyInfo" placeholder="记录重要的信息点..."></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label>学习收获</label>
-                    <textarea id="learnings" placeholder="记录从此次调研中学到的内容..."></textarea>
-                </div>
-
                 <div class="btn-container">
                     <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">取消</button>
                     <button type="submit" class="btn btn-primary">生成 Markdown</button>
@@ -314,7 +309,6 @@
             const status = document.getElementById('status').value;
             const discussion = document.getElementById('discussion').value;
             const keyInfo = document.getElementById('keyInfo').value;
-            const learnings = document.getElementById('learnings').value;
 
             let markdown = '';
 
@@ -416,20 +410,6 @@
 
             markdown += '**后续计划**:\n';
             markdown += '- [ ]\n\n';
-
-            // 学习收获
-            markdown += '## 学习收获\n\n';
-            if (learnings) {
-                markdown += `${learnings}\n\n`;
-            } else {
-                if (type === '专家') {
-                    markdown += '（记录专家的见解、建议、经验等）\n\n';
-                } else if (type === '高校') {
-                    markdown += '（记录学到的理论、技术、研究方法等）\n\n';
-                } else {
-                    markdown += '（记录从该企业学到的经验、技术、方法等）\n\n';
-                }
-            }
 
             // 相关资料
             markdown += '## 相关资料\n';
