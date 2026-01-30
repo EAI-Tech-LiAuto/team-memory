@@ -318,6 +318,97 @@
         .footer-links a:hover {
             text-decoration: underline;
         }
+
+        /* 行业调研模块样式 */
+        .research-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+
+        .research-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .research-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .research-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .research-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .research-location {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-已接洽 {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-待跟进 {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-持续关注 {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
     </style>
 </head>
 <body>
@@ -346,8 +437,8 @@
                 <div class="stat-label">主题文档</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">0</div>
-                <div class="stat-label">架构决策</div>
+                <div class="stat-number">1</div>
+                <div class="stat-label">行业调研</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">4</div>
@@ -485,6 +576,52 @@
                         </div>
                         <div class="card-summary">
                             | 维度 | 原计划 | 新计划 | |------|--------|--------| | **时间周期** | 8周（2个月） | **4周（1个月）** | | **目标场景** | 工业场景为主 | **工业+家用服务双场景** | | **交付成果** | 80-100页详细商业计划书 ...
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🔍 行业调研</h2>
+                <div class="research-filters">
+                    <div class="filter-group">
+                        <label>类型:</label>
+                        <select class="filter-select" id="typeFilter" onchange="filterResearch()">
+                            <option value="all">全部</option>
+                            <option value="企业">🏢 企业</option>
+                            <option value="高校">🎓 高校</option>
+                            <option value="专家">👤 专家</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>状态:</label>
+                        <select class="filter-select" id="statusFilter" onchange="filterResearch()">
+                            <option value="all">全部</option>
+                            <option value="已接洽">已接洽</option>
+                            <option value="待跟进">待跟进</option>
+                            <option value="持续关注">持续关注</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="research-cards">
+                    <div class="research-card" data-type="企业" data-location="北京市" data-status="已接洽" onclick="window.open('viewer.html?file=./research/companies/示例科技公司.md')">
+                        <div class="card-header">
+                            <div class="card-title">🏢 示例科技公司</div>
+                            <div class="card-date">2026-01-29</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="research-type">企业</div>
+                            <div class="research-location">📍 北京市</div>
+                            <span class="status-badge status-已接洽">已接洽</span>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">robotics</span>
+                            <span class="tag">AI</span>
+                            <span class="tag">示例</span>
+                        </div>
+                        <div class="card-summary">
+                            - **全称**: 示例科技有限公司 - **成立时间**: 2020年 - **规模**: 100-500人 - **官网**: https://example-robotics.com - **地址**: 北京市海淀区中关村科技园 | 姓名 | 职位 | 联系方式 | 备注 | |------|...
                         </div>
                     </div>
 
@@ -654,6 +791,27 @@
                 }, 300);
             });
         });
+
+        // 行业调研筛选功能
+        function filterResearch() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const cards = document.querySelectorAll('.research-card');
+
+            cards.forEach(card => {
+                const cardType = card.getAttribute('data-type');
+                const cardStatus = card.getAttribute('data-status');
+
+                const typeMatch = typeFilter === 'all' || cardType === typeFilter;
+                const statusMatch = statusFilter === 'all' || cardStatus === statusFilter;
+
+                if (typeMatch && statusMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>
