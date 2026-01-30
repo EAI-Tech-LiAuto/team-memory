@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加调研记录 - 团队知识库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .output-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .output-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .output-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        .help-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 添加调研记录</h1>
+            <p>填写表单生成调研记录的 Markdown 内容</p>
+        </div>
+
+        <div class="form-container">
+            <form id="researchForm">
+                <div class="form-group">
+                    <label>调研类型 <span class="required">*</span></label>
+                    <select id="type" required>
+                        <option value="">请选择</option>
+                        <option value="企业">🏢 企业</option>
+                        <option value="高校">🎓 高校</option>
+                        <option value="专家">👤 专家</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>名称 <span class="required">*</span></label>
+                    <input type="text" id="name" placeholder="企业/高校/专家名称" required>
+                    <div class="help-text">例如：XX科技公司、清华大学、张三</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>所在城市</label>
+                        <input type="text" id="location" placeholder="如：北京市">
+                    </div>
+                    <div class="form-group">
+                        <label>走访日期</label>
+                        <input type="date" id="visitDate">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>记录人 <span class="required">*</span></label>
+                    <input type="text" id="author" placeholder="你的名字" required>
+                </div>
+
+                <div class="form-group">
+                    <label>标签</label>
+                    <input type="text" id="tags" placeholder="用逗号分隔，如：robotics, AI, 智能制造">
+                    <div class="help-text">用于分类和搜索</div>
+                </div>
+
+                <div class="form-group">
+                    <label>状态</label>
+                    <select id="status">
+                        <option value="已接洽">已接洽</option>
+                        <option value="待跟进">待跟进</option>
+                        <option value="持续关注">持续关注</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>讨论内容</label>
+                    <textarea id="discussion" placeholder="记录讨论的主要内容..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>关键信息</label>
+                    <textarea id="keyInfo" placeholder="记录重要的信息点..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>学习收获</label>
+                    <textarea id="learnings" placeholder="记录从此次调研中学到的内容..."></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">取消</button>
+                    <button type="submit" class="btn btn-primary">生成 Markdown</button>
+                </div>
+            </form>
+
+            <div class="output-section" id="outputSection">
+                <h3>📄 生成的 Markdown 内容</h3>
+                <div class="output-content" id="outputContent"></div>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 复制到剪贴板</button>
+
+                <div class="instructions">
+                    <h4>📝 如何使用：</h4>
+                    <ol>
+                        <li>点击上方"复制到剪贴板"按钮</li>
+                        <li>在本地创建文件：<code>research/[类型]/[名称].md</code></li>
+                        <li>粘贴复制的内容并保存</li>
+                        <li>运行命令：<code>python3 scripts/update-index.py</code></li>
+                        <li>提交到 Git：<code>git add . && git commit -m "feat: 添加调研记录" && git push</code></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 设置默认日期为今天
+        document.getElementById('visitDate').valueAsDate = new Date();
+
+        document.getElementById('researchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generateMarkdown();
+        });
+
+        function generateMarkdown() {
+            const type = document.getElementById('type').value;
+            const name = document.getElementById('name').value;
+            const location = document.getElementById('location').value;
+            const visitDate = document.getElementById('visitDate').value;
+            const author = document.getElementById('author').value;
+            const tags = document.getElementById('tags').value;
+            const status = document.getElementById('status').value;
+            const discussion = document.getElementById('discussion').value;
+            const keyInfo = document.getElementById('keyInfo').value;
+            const learnings = document.getElementById('learnings').value;
+
+            let markdown = '';
+
+            // Frontmatter
+            markdown += '---\n';
+            markdown += `name: ${name}\n`;
+            markdown += `type: ${type}\n`;
+            if (type === '企业') {
+                markdown += 'industry: \n';
+            } else if (type === '高校') {
+                // 高校特有字段可以留空
+            } else if (type === '专家') {
+                markdown += 'affiliation: \n';
+                markdown += 'expertise: \n';
+            }
+            markdown += `location: ${location}\n`;
+            markdown += `visit_date: ${visitDate}\n`;
+            markdown += `status: ${status}\n`;
+            markdown += `tags: [${tags}]\n`;
+            markdown += '---\n\n';
+
+            // 标题
+            markdown += `# ${name}\n\n`;
+
+            // 基本信息
+            markdown += '## 基本信息\n';
+            if (type === '企业') {
+                markdown += `- **全称**: ${name}\n`;
+                markdown += '- **成立时间**:\n';
+                markdown += '- **规模**:\n';
+                markdown += '- **官网**:\n';
+                markdown += `- **地址**: ${location}\n\n`;
+            } else if (type === '高校') {
+                markdown += `- **全称**: ${name}\n`;
+                markdown += '- **类型**: 高校/研究所\n';
+                markdown += '- **相关院系**:\n';
+                markdown += '- **官网**:\n';
+                markdown += `- **地址**: ${location}\n\n`;
+            } else if (type === '专家') {
+                markdown += `- **姓名**: ${name}\n`;
+                markdown += '- **职位**:\n';
+                markdown += '- **所属机构**:\n';
+                markdown += '- **专业领域**:\n';
+                markdown += '- **联系方式**:\n\n';
+            }
+
+            // 联系人表格
+            markdown += '## 联系人\n';
+            if (type === '专家') {
+                markdown += '（专家个人信息已在基本信息中列出）\n\n';
+            } else {
+                markdown += '| 姓名 | 职位 | 联系方式 | 备注 |\n';
+                markdown += '|------|------|----------|------|\n';
+                markdown += '|      |      |          |      |\n\n';
+            }
+
+            // 业务/研究方向
+            if (type === '企业') {
+                markdown += '## 业务范围\n';
+                markdown += '- **核心产品**:\n';
+                markdown += '- **技术方向**:\n';
+                markdown += '- **应用场景**:\n\n';
+            } else if (type === '高校') {
+                markdown += '## 研究方向\n';
+                markdown += '- **主要研究领域**:\n';
+                markdown += '- **技术优势**:\n';
+                markdown += '- **相关项目**:\n\n';
+            } else if (type === '专家') {
+                markdown += '## 专业背景\n';
+                markdown += '- **教育背景**:\n';
+                markdown += '- **工作经历**:\n';
+                markdown += '- **主要成果**:\n\n';
+            }
+
+            // 走访/访谈记录
+            if (type === '专家') {
+                markdown += '## 访谈记录\n\n';
+                markdown += `### ${visitDate} 访谈\n\n`;
+            } else {
+                markdown += '## 走访记录\n\n';
+                markdown += `### ${visitDate} 初次走访\n\n`;
+            }
+
+            markdown += `**参与人员**: ${author}\n\n`;
+
+            if (discussion) {
+                markdown += '**讨论内容**:\n';
+                markdown += `${discussion}\n\n`;
+            } else {
+                markdown += '**讨论内容**:\n-\n\n';
+            }
+
+            if (keyInfo) {
+                markdown += '**关键信息**:\n';
+                markdown += `${keyInfo}\n\n`;
+            } else {
+                markdown += '**关键信息**:\n-\n\n';
+            }
+
+            markdown += '**后续计划**:\n';
+            markdown += '- [ ]\n\n';
+
+            // 学习收获
+            markdown += '## 学习收获\n\n';
+            if (learnings) {
+                markdown += `${learnings}\n\n`;
+            } else {
+                if (type === '专家') {
+                    markdown += '（记录专家的见解、建议、经验等）\n\n';
+                } else if (type === '高校') {
+                    markdown += '（记录学到的理论、技术、研究方法等）\n\n';
+                } else {
+                    markdown += '（记录从该企业学到的经验、技术、方法等）\n\n';
+                }
+            }
+
+            // 相关资料
+            markdown += '## 相关资料\n';
+            markdown += '-\n\n';
+
+            // 尾部
+            markdown += '---\n\n';
+            markdown += `**记录人**: ${author}\n`;
+            markdown += `**记录日期**: ${visitDate}\n`;
+
+            // 显示输出
+            document.getElementById('outputContent').textContent = markdown;
+            document.getElementById('outputSection').style.display = 'block';
+
+            // 滚动到输出区域
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyToClipboard() {
+            const content = document.getElementById('outputContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ 已复制！';
+                btn.style.background = '#4CAF50';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#4CAF50';
+                }, 2000);
+            }).catch(err => {
+                alert('复制失败，请手动复制内容');
+            });
+        }
+    </script>
+</body>
+</html>
