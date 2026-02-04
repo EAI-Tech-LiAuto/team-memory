@@ -1020,6 +1020,62 @@ ${v.nextSteps}
                 alert(`文件已下载！\n\n文件名：${filename}\n下载位置：通常在 ~/Downloads/ 文件夹\n\n请打开 Finder，查看"下载"文件夹，找到这个文件。`);
             }, 500);
         }
+
+        // 暴露给父窗口的函数（供在线编辑器使用）
+        window.getMarkdownContent = function() {
+            // 收集表单数据
+            const formData = {
+                name: document.getElementById('name').value,
+                type: document.getElementById('type').value,
+                industry: document.getElementById('industry').value,
+                location: document.getElementById('location').value,
+                status: document.getElementById('status').value,
+                tags: tags,
+                foundedDate: document.getElementById('foundedDate').value,
+                scale: document.getElementById('scale').value,
+                website: document.getElementById('website').value,
+                address: document.getElementById('address').value,
+                description: document.getElementById('description').value,
+                coreProducts: document.getElementById('coreProducts').value,
+                techDirection: document.getElementById('techDirection').value,
+                scenarios: document.getElementById('scenarios').value,
+                materials: document.getElementById('materials').value
+            };
+
+            // 收集联系人
+            const contacts = [];
+            document.querySelectorAll('#contactTableBody tr').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs[0].value) {
+                    contacts.push({
+                        name: inputs[0].value,
+                        position: inputs[1].value,
+                        contact: inputs[2].value,
+                        note: inputs[3].value
+                    });
+                }
+            });
+
+            // 收集走访记录
+            const visits = [];
+            document.querySelectorAll('.visit-record').forEach(record => {
+                visits.push({
+                    date: record.querySelector('.visit-date').value,
+                    title: record.querySelector('.visit-title').value,
+                    participants: record.querySelector('.visit-participants').value,
+                    discussion: record.querySelector('.visit-discussion').value,
+                    keyInfo: record.querySelector('.visit-keyinfo').value,
+                    nextSteps: record.querySelector('.visit-nextsteps').value
+                });
+            });
+
+            // 生成并返回 Markdown
+            return generateMarkdown(formData, contacts, visits);
+        };
+
+        window.getFilename = function() {
+            return originalFileName;
+        };
     </script>
 </body>
 </html>
