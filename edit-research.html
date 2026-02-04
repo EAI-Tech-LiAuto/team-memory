@@ -304,7 +304,7 @@
     <div class="container">
         <div class="header">
             <h1>📝 编辑调研记录</h1>
-            <p>在线编辑调研信息</p>
+            <p id="modeIndicator" style="margin-top: 10px; opacity: 0.9;">检测环境中...</p>
             <a href="javascript:history.back()" class="back-button">← 返回</a>
         </div>
 
@@ -455,6 +455,11 @@
             document.getElementById('githubButton').style.display = 'inline-block';
             // 修改下载按钮文本
             document.getElementById('downloadButton').textContent = '💾 下载到本地';
+            // 更新模式指示器
+            document.getElementById('modeIndicator').textContent = '🌐 在线模式 - 可直接保存到 GitHub';
+        } else {
+            // 本地模式
+            document.getElementById('modeIndicator').textContent = '💻 本地模式 - 下载后需手动同步';
         }
 
         // GitHub 在线保存功能
