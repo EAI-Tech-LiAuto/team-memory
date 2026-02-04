@@ -220,22 +220,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 3分钟上手指南</h1>
+            <h1>⚡ 3分钟快速上手</h1>
             <p>🤖 人形机器人团队知识库 - 让知识流动起来</p>
-        </div>
-
-        <div class="guide-banner" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);">
-            <div class="guide-banner-text">
-                <h3>🎯 完全小白？</h3>
-                <p>零基础也能上手的超详细指南，有脚本自动化操作！</p>
-            </div>
-            <a href="新手指南.md" class="guide-button" style="background: white; color: #FF6B6B;">查看新手指南</a>
         </div>
 
         <div class="content">
             <h2 style="color: #333; margin-bottom: 20px;">这是什么？</h2>
             <p style="font-size: 1.15em; color: #666;">
-                这是<strong>EAI-Tech-LiAuto团队的知识库</strong>，用来保存大家与Claude Code的重要对话。<br>
+                这是<strong>EAI-Tech-LiAuto团队的知识库</strong>，用来保存团队的重要对话和调研记录。<br>
                 想象一下：团队每个人的经验和智慧，都记录在这里，随时可以查阅。<br>
                 当前聚焦：<strong>人形机器人项目</strong>的所有研究、设计和决策。
             </p>
@@ -251,9 +243,9 @@
                 <h3>🔍 我只想看看（浏览者）</h3>
                 <p><strong>超简单！</strong>你现在就在用了。</p>
                 <ul style="margin-left: 25px; color: #666;">
-                    <li>直接浏览首页的对话卡片</li>
+                    <li>直接浏览首页的对话卡片和调研记录</li>
                     <li>使用搜索框查找感兴趣的内容</li>
-                    <li>点击卡片查看完整对话</li>
+                    <li>点击卡片查看完整内容</li>
                 </ul>
                 <div class="success" style="margin-top: 15px;">
                     无需注册、无需登录，打开就能用！
@@ -262,56 +254,91 @@
             </div>
 
             <div class="role-section">
-                <h3>✍️ 我想贡献内容（贡献者）</h3>
-                <p>需要简单的3个步骤：</p>
+                <h3>✍️ 我想编辑调研记录（贡献者 - 推荐方式）</h3>
+                <p><strong>在线编辑，超级简单！</strong></p>
 
                 <div class="step-container">
                     <div class="step">
                         <div class="step-number">1</div>
-                        <h3>克隆仓库到电脑</h3>
-                        <p>打开命令行工具，运行：</p>
-                        <div class="code-box">git clone https://github.com/EAI-Tech-LiAuto/team-memory.git<br>cd team-memory</div>
+                        <h3>配置 GitHub Token（仅首次）</h3>
+                        <p>第一次编辑时，需要配置访问权限：</p>
+                        <ul style="margin-left: 25px; color: #666;">
+                            <li>访问：<a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a></li>
+                            <li>点击"Generate new token (classic)"</li>
+                            <li>勾选"repo"权限</li>
+                            <li>复制生成的 token</li>
+                            <li>在编辑页面粘贴保存</li>
+                        </ul>
                         <div class="tip">
-                            <strong>什么是克隆？</strong>就是把这个知识库下载到你的电脑上。
+                            Token 会保存在你的浏览器中，以后不用再输入！
                         </div>
                     </div>
 
                     <div class="step">
                         <div class="step-number">2</div>
-                        <h3>记录你的对话</h3>
-                        <p>当你与Claude Code有了重要对话后：</p>
+                        <h3>编辑调研记录</h3>
+                        <p>在首页找到想要编辑的调研记录：</p>
+                        <ul style="margin-left: 25px; color: #666;">
+                            <li>点击调研记录卡片</li>
+                            <li>点击"编辑此文档"按钮</li>
+                            <li>修改内容（所有字段都可以编辑）</li>
+                            <li>点击"🚀 保存到 GitHub"</li>
+                        </ul>
+                        <div class="success">
+                            保存成功后，1-2分钟网页会自动更新，团队就能看到你的修改了！
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    <strong>适用场景：</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>更新企业调研信息</li>
+                        <li>添加走访记录</li>
+                        <li>补充联系人信息</li>
+                        <li>更新后续计划</li>
+                    </ul>
+                </div>
+
+                <a href="index.html" class="button">去首页编辑</a>
+            </div>
+
+            <div class="role-section" style="background: #f0f0f0; border-left: 3px solid #999;">
+                <h3>💻 本地使用（备用方式）</h3>
+                <p><strong>如果你熟悉Git，可以选择本地方式。</strong></p>
+
+                <div class="step-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>克隆仓库到电脑</h3>
+                        <div class="code-box">git clone https://github.com/EAI-Tech-LiAuto/team-memory.git<br>cd team-memory</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>添加对话记录</h3>
                         <div class="code-box">
                             # Windows用户<br>
-                            scripts\capture.bat 我的话题名称<br><br>
+                            scripts\add-conversation.bat<br><br>
                             # Mac/Linux用户<br>
-                            ./scripts/capture.sh 我的话题名称
+                            ./scripts/add-conversation.sh
                         </div>
-                        <p>脚本会自动创建文件并打开编辑器，填写内容即可。</p>
-                        <div class="tip">
-                            <strong>记录什么？</strong>
-                            <ul style="margin-left: 20px; margin-top: 10px;">
-                                <li>技术决策（为什么选Orin而不选其他芯片）</li>
-                                <li>问题解决方案（机械臂抓取精度不够怎么解决）</li>
-                                <li>设计思路（人机交互安全策略怎么设计）</li>
-                                <li>技术调研（对比了哪些激光雷达方案）</li>
-                                <li>场景分析（老人照护场景有哪些需求）</li>
-                            </ul>
-                        </div>
+                        <p>脚本会引导你填写信息，然后自动创建文件。</p>
                     </div>
 
                     <div class="step">
                         <div class="step-number">3</div>
                         <h3>提交到团队库</h3>
-                        <p>编辑完成后，运行3条命令：</p>
                         <div class="code-box">
                             git add .<br>
-                            git commit -m "feat: 添加XX讨论 by @你的名字"<br>
+                            git commit -m "添加XX讨论 by @你的名字"<br>
                             git push
                         </div>
-                        <div class="success">
-                            提交成功后，1-2分钟网页会自动更新，团队就能看到你的内容了！
-                        </div>
                     </div>
+                </div>
+
+                <div class="warning">
+                    <strong>注意：</strong>本地方式需要安装Git和Python，配置较复杂。如果不熟悉命令行，<strong>强烈建议使用在线编辑方式</strong>。
                 </div>
             </div>
 
@@ -319,98 +346,95 @@
 
             <div class="faq">
                 <div class="faq-item">
-                    <div class="faq-question">❓ 我不会Git怎么办？</div>
+                    <div class="faq-question">❓ Token 安全吗？</div>
                     <div class="faq-answer">
-                        只需要学会4条命令：
+                        Token 保存在你的浏览器中，不会上传到服务器。但请注意：<br>
                         <ul style="margin-left: 20px; margin-top: 5px;">
-                            <li><code>git clone [网址]</code> - 下载仓库（只用一次）</li>
-                            <li><code>git pull</code> - 获取最新内容</li>
-                            <li><code>git add . && git commit -m "说明" && git push</code> - 提交内容</li>
+                            <li>不要分享你的 token</li>
+                            <li>定期更新 token（建议3个月一次）</li>
+                            <li>如果 token 泄露，立即在 GitHub 删除</li>
                         </ul>
-                        照着上面的步骤操作就行，5分钟就能学会！
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-question">❓ 需要记录所有对话吗？</div>
+                    <div class="faq-question">❓ 保存失败怎么办？</div>
                     <div class="faq-answer">
-                        <strong>不需要！</strong>只记录<strong>有价值、可复用</strong>的对话。<br>
-                        比如：重要的技术决策、复杂问题的解决方案、系统设计等。<br>
-                        简单的语法查询就不用记录了。
+                        可能的原因：<br>
+                        <ul style="margin-left: 20px; margin-top: 5px;">
+                            <li>Token 无效或过期 → 重新生成并配置</li>
+                            <li>网络连接问题 → 检查网络并重试</li>
+                            <li>浏览器缓存问题 → 清除缓存或使用隐私模式</li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-question">❓ 我改错了怎么办？</div>
+                    <div class="faq-question">❓ 多个人同时编辑会冲突吗？</div>
                     <div class="faq-answer">
-                        没关系！Git有完整的历史记录，可以随时回退。<br>
-                        或者提交一个修正版本，说明"更正XX内容"即可。
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">❓ 多个人同时提交会冲突吗？</div>
-                    <div class="faq-answer">
-                        通常不会，因为每个人记录的是不同的文件。<br>
-                        如果真的冲突了，Git会提示你，手动解决一下就行。
+                        GitHub 会自动处理大部分冲突。建议：<br>
+                        <ul style="margin-left: 20px; margin-top: 5px;">
+                            <li>不同人编辑不同的文件</li>
+                            <li>编辑前先看看有没有人在编辑</li>
+                            <li>如果出现冲突，系统会提示</li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">❓ 网页多久更新一次？</div>
                     <div class="faq-answer">
-                        当有人<code>git push</code>后，GitHub会自动重新部署，通常1-2分钟就能看到更新。<br>
-                        如果没看到，试试刷新浏览器（Ctrl+F5）。
+                        当有人保存内容后，GitHub Pages 会自动重新部署，通常<strong>1-3分钟</strong>就能看到更新。<br>
+                        如果没看到，试试强制刷新浏览器（Cmd+Shift+R 或 Ctrl+Shift+R）。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">❓ 我不小心改错了怎么办？</div>
+                    <div class="faq-answer">
+                        没关系！Git 有完整的历史记录，可以随时恢复到之前的版本。<br>
+                        联系技术同事帮忙恢复，或者重新编辑一次覆盖即可。
                     </div>
                 </div>
             </div>
 
-            <h2 style="color: #333; margin: 40px 0 20px 0;">日常工作流</h2>
-
-            <div class="step">
-                <h3>☀️ 每天早上</h3>
-                <div class="code-box">cd ~/team-memory<br>git pull</div>
-                <p>获取团队最新的知识更新。查看家政机器人项目的最新进展。</p>
-            </div>
+            <h2 style="color: #333; margin: 40px 0 20px 0;">日常使用建议</h2>
 
             <div class="step">
                 <h3>🔍 遇到问题时</h3>
-                <p>先来网页搜索一下，看看团队是否已经讨论过。</p>
+                <p>先来网页搜索一下，看看团队是否已经讨论过类似问题或接触过相关企业。</p>
             </div>
 
             <div class="step">
-                <h3>💬 重要对话后</h3>
-                <div class="code-box">
-                    scripts\capture.bat 话题名称<br>
-                    # 编辑文件...<br>
-                    git add . && git commit -m "说明" && git push
-                </div>
-                <p>5分钟记录，全团队受益。</p>
+                <h3>📝 调研完成后</h3>
+                <p>及时更新调研记录：</p>
+                <ul style="margin-left: 25px; color: #666;">
+                    <li>添加走访记录</li>
+                    <li>补充关键信息</li>
+                    <li>更新后续计划</li>
+                    <li>添加相关资料链接</li>
+                </ul>
+                <p>让团队第一时间了解最新进展！</p>
             </div>
 
             <div class="warning">
                 <strong>记住：</strong>知识分享出去才有价值。你的经验可能正好解决别人的问题！
             </div>
 
-            <h2 style="color: #333; margin: 40px 0 20px 0;">快速链接</h2>
+            <h2 style="color: #333; margin: 40px 0 20px 0;">更多资源</h2>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="index.html" class="button">📖 浏览对话记录</a>
-                <a href="CLAUDE.md" class="button button-secondary">📚 团队记忆索引</a>
-                <a href="https://github.com/EAI-Tech-LiAuto/team-memory" class="button button-secondary" target="_blank">💻 GitHub仓库</a>
-            </div>
-
-            <div class="success" style="margin-top: 40px; text-align: center; font-size: 1.2em;">
-                就这么简单！有问题随时问团队成员 👍<br>
-                <small style="font-size: 0.85em; opacity: 0.8;">当前专注：人形机器人项目研发全流程</small>
+                <a href="index.html" class="button">📖 浏览知识库</a>
+                <a href="使用指南-在线和本地.md" class="button button-secondary">📚 详细使用指南</a>
+                <a href="新手指南.md" class="button button-secondary">🎓 超详细新手指南</a>
             </div>
         </div>
 
         <div class="footer">
-            <p><strong>🤖 EAI-Tech-LiAuto 团队共享知识库</strong></p>
-            <p style="margin-top: 10px;">让知识流动，让经验复用 · 人形机器人项目</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">
-                <a href="https://eai-tech-liauto.github.io/team-memory/" style="color: #667eea; text-decoration: none;">https://eai-tech-liauto.github.io/team-memory/</a>
+            <p>🤖 团队共享知识库 - 让知识流动起来</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/EAI-Tech-LiAuto/team-memory" target="_blank" style="color: #667eea; text-decoration: none;">GitHub仓库</a> |
+                <a href="index.html" style="color: #667eea; text-decoration: none;">返回首页</a>
             </p>
         </div>
     </div>
