@@ -433,17 +433,95 @@
 
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="history.back()">取消</button>
-                    <button type="submit" class="btn btn-primary">💾 保存并下载</button>
-                    <button type="button" class="btn btn-primary" onclick="saveAndSync(event)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🚀 保存并同步</button>
+                    <button type="submit" class="btn btn-primary" id="downloadButton">💾 保存并下载</button>
+                    <button type="button" class="btn btn-primary" onclick="saveToGitHub()" id="githubButton" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: none;">🚀 保存到 GitHub</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <script src="./scripts/github-api.js"></script>
     <script>
         let tags = [];
         let originalFileName = '';
         let originalFilePath = '';
+
+        // 检测是否为在线环境
+        const isOnline = window.location.protocol === 'https:' ||
+                        window.location.hostname === 'eai-tech-liauto.github.io';
+
+        // 如果是在线环境，显示 GitHub 保存按钮
+        if (isOnline) {
+            document.getElementById('githubButton').style.display = 'inline-block';
+            // 修改下载按钮文本
+            document.getElementById('downloadButton').textContent = '💾 下载到本地';
+        }
+
+        // GitHub 在线保存功能
+        async function saveToGitHub() {
+            const button = document.getElementById('githubButton');
+            button.disabled = true;
+            button.textContent = '⏳ 保存中...';
+
+            try {
+                // 检查是否有 token
+                const tokenManager = new TokenManager();
+                let token = tokenManager.getToken();
+
+                if (!token) {
+                    token = await tokenManager.promptToken();
+                    if (!token) {
+                        throw new Error('未配置 Token');
+                    }
+                }
+
+                // 验证 token
+                const api = new GitHubAPI(token, 'EAI-Tech-LiAuto', 'team-memory');
+                const isValid = await api.validateToken();
+
+                if (!isValid) {
+                    tokenManager.removeToken();
+                    throw new Error('Token 无效，请重新配置');
+                }
+
+                // 生成 Markdown 内容
+                const markdown = window.getMarkdownContent();
+                const filename = window.getFilename();
+                const filePath = `research/companies/${filename}`;
+
+                // 获取文件的 SHA（如果存在）
+                let sha = null;
+                try {
+                    const fileData = await api.getFile(filePath);
+                    sha = fileData.sha;
+                } catch (error) {
+                    // 文件不存在，将创建新文件
+                }
+
+                // 保存文件
+                await api.saveFile(
+                    filePath,
+                    markdown,
+                    `update: 更新调研记录 - ${filename}\n\n通过在线编辑器更新\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>`,
+                    sha
+                );
+
+                alert('✅ 保存成功！\n\n文件已提交到 GitHub。\n刷新主页即可查看更新。');
+
+                // 可选：返回上一页
+                setTimeout(() => {
+                    if (confirm('是否返回查看页面？')) {
+                        history.back();
+                    }
+                }, 500);
+
+            } catch (error) {
+                alert(`❌ 保存失败：${error.message}\n\n${error.message.includes('Token') ? '请重新配置 Token' : '请检查网络连接或联系管理员'}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = '🚀 保存到 GitHub';
+            }
+        }
 
         // 获取URL参数
         const urlParams = new URLSearchParams(window.location.search);

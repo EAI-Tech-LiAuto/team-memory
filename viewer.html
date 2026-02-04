@@ -334,18 +334,11 @@ git push</pre>
         function showEditModal() {
             console.log('Current file path:', currentFilePath); // 调试信息
 
-            // 检测是否为在线环境
-            const isOnline = window.location.protocol === 'https:' ||
-                            (window.location.hostname !== 'localhost' && window.location.hostname !== '');
-
             // 如果是调研记录，跳转到编辑页面
             if (currentFilePath.startsWith('research/')) {
-                // 根据环境选择编辑器
-                const editorPage = isOnline ? 'edit-research-online.html' : 'edit-research.html';
-
-                // 构建完整的 URL
+                // 统一使用 edit-research.html（它会自动检测在线/本地环境）
                 const baseUrl = window.location.href.split('?')[0].replace('viewer.html', '');
-                const editUrl = `${baseUrl}${editorPage}?file=./${encodeURIComponent(currentFilePath)}`;
+                const editUrl = `${baseUrl}edit-research.html?file=./${encodeURIComponent(currentFilePath)}`;
                 console.log('Redirecting to:', editUrl); // 调试信息
                 window.location.href = editUrl;
                 return;
