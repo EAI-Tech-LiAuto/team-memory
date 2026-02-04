@@ -434,6 +434,7 @@
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="history.back()">取消</button>
                     <button type="submit" class="btn btn-primary">💾 保存并下载</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAndSync(event)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🚀 保存并同步</button>
                 </div>
             </form>
         </div>
@@ -693,6 +694,107 @@
             `;
 
             container.appendChild(recordDiv);
+        }
+
+        // 保存并同步到Git（通过本地服务器）
+        async function saveAndSync(event) {
+            event.preventDefault();
+
+            // 先检查服务器是否运行
+            try {
+                const healthCheck = await fetch('http://localhost:5000/api/health');
+                if (!healthCheck.ok) {
+                    throw new Error('服务器未响应');
+                }
+            } catch (error) {
+                alert('❌ 本地服务器未启动！\n\n请先双击项目根目录下的"启动本地服务器.command"文件启动服务器。\n\n启动后，刷新此页面并重试。');
+                return;
+            }
+
+            // 收集表单数据（复用现有代码）
+            const formData = {
+                name: document.getElementById('name').value,
+                type: document.getElementById('type').value,
+                industry: document.getElementById('industry').value,
+                location: document.getElementById('location').value,
+                status: document.getElementById('status').value,
+                tags: tags,
+                foundedDate: document.getElementById('foundedDate').value,
+                scale: document.getElementById('scale').value,
+                website: document.getElementById('website').value,
+                address: document.getElementById('address').value,
+                description: document.getElementById('description').value,
+                coreProducts: document.getElementById('coreProducts').value,
+                techDirection: document.getElementById('techDirection').value,
+                scenarios: document.getElementById('scenarios').value,
+                materials: document.getElementById('materials').value
+            };
+
+            // 收集联系人
+            const contacts = [];
+            document.querySelectorAll('#contactTableBody tr').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs[0].value) {
+                    contacts.push({
+                        name: inputs[0].value,
+                        position: inputs[1].value,
+                        contact: inputs[2].value,
+                        note: inputs[3].value
+                    });
+                }
+            });
+
+            // 收集走访记录
+            const visits = [];
+            document.querySelectorAll('.visit-record').forEach(record => {
+                visits.push({
+                    date: record.querySelector('.visit-date').value,
+                    title: record.querySelector('.visit-title').value,
+                    participants: record.querySelector('.visit-participants').value,
+                    discussion: record.querySelector('.visit-discussion').value,
+                    keyInfo: record.querySelector('.visit-keyinfo').value,
+                    nextSteps: record.querySelector('.visit-nextsteps').value
+                });
+            });
+
+            // 生成Markdown
+            const markdown = generateMarkdown(formData, contacts, visits);
+
+            // 发送到服务器
+            try {
+                const button = event.target;
+                button.disabled = true;
+                button.textContent = '⏳ 同步中...';
+
+                const response = await fetch('http://localhost:5000/api/save-research', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        filename: originalFileName,
+                        content: markdown
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ 成功！\n\n文件已保存并同步到GitHub。\n刷新网页即可查看更新。');
+                    // 可选：自动返回上一页
+                    // setTimeout(() => history.back(), 1000);
+                } else {
+                    alert(`❌ 同步失败：${result.error}`);
+                }
+
+                button.disabled = false;
+                button.textContent = '🚀 保存并同步';
+
+            } catch (error) {
+                alert(`❌ 同步失败：${error.message}\n\n请确保本地服务器正在运行。`);
+                event.target.disabled = false;
+                event.target.textContent = '🚀 保存并同步';
+            }
         }
 
         // 表单提交

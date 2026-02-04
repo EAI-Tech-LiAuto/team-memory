@@ -271,13 +271,29 @@ def update_index_html(base_path, conversations, research_items):
         research_replacement = rf'\g<1>\n{research_cards_html}\n                \g<3>'
         html_content = re.sub(research_pattern, research_replacement, html_content, flags=re.DOTALL)
 
-    # 生成时间线
+    # 生成时间线 - 修复：使用更保守的匹配，只替换timeline内容
+    # 匹配: <div class="timeline">后的内容直到该div关闭之前
     timeline_html = '\n'.join([generate_timeline_html(conv) for conv in conversations])
 
-    # 替换时间线部分
-    pattern = r'(<h2 class="section-title">⏱️ 时间线</h2>\s*<div class="timeline">)(.*?)(</div>\s*</div>\s*</div>\s*<div class="footer">)'
-    replacement = rf'\g<1>\n{timeline_html}\n                \g<3>'
-    html_content = re.sub(pattern, replacement, html_content, flags=re.DOTALL)
+    # 找到timeline div开始
+    timeline_div_start = '<div class="timeline">'
+    timeline_idx = html_content.find(timeline_div_start)
+
+    if timeline_idx > 0:
+        # 找到timeline div结束位置 - 找到</div>\s*</div>\s*</div>的匹配
+        rest_of_html = html_content[timeline_idx + len(timeline_div_start):]
+
+        # 查找timeline内部的items结束位置
+        # 匹配几个连续的时间线项，然后是两个</div>
+        timeline_items_end = rest_of_html.find('</div>\n                </div>\n            </div>\n\n        <div class="footer">')
+
+        if timeline_items_end > 0:
+            # 保留timeline div的开始，中间内容替换，保留结束
+            before = html_content[:timeline_idx + len(timeline_div_start)]
+            after = html_content[timeline_idx + len(timeline_div_start) + timeline_items_end:]
+
+            # 在before和after之间插入新的timeline items
+            html_content = before + '\n' + timeline_html + '\n            ' + after
 
     # 写回文件
     with open(index_path, 'w', encoding='utf-8') as f:
