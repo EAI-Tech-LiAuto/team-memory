@@ -433,7 +433,7 @@
 
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="history.back()">取消</button>
-                    <button type="submit" class="btn btn-primary" id="downloadButton">💾 保存并下载</button>
+                    <button type="button" class="btn btn-primary" id="downloadButton" onclick="handleDownload(event)">💾 保存并下载</button>
                     <button type="button" class="btn btn-primary" onclick="saveToGitHub()" id="githubButton" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: none;">🚀 保存到 GitHub</button>
                 </div>
             </form>
@@ -919,69 +919,26 @@
             }
         }
 
-        // 表单提交
-        document.getElementById('editForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // 处理下载按钮点击
+        function handleDownload(event) {
+            event.preventDefault();
 
-            // 收集表单数据
-            const formData = {
-                name: document.getElementById('name').value,
-                type: document.getElementById('type').value,
-                industry: document.getElementById('industry').value,
-                location: document.getElementById('location').value,
-                status: document.getElementById('status').value,
-                tags: tags,
-                foundedDate: document.getElementById('foundedDate').value,
-                scale: document.getElementById('scale').value,
-                website: document.getElementById('website').value,
-                address: document.getElementById('address').value,
-                description: document.getElementById('description').value,
-                coreProducts: document.getElementById('coreProducts').value,
-                techDirection: document.getElementById('techDirection').value,
-                scenarios: document.getElementById('scenarios').value,
-                materials: document.getElementById('materials').value
-            };
-
-            // 收集联系人
-            const contacts = [];
-            document.querySelectorAll('#contactTableBody tr').forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                if (inputs[0].value) {
-                    contacts.push({
-                        name: inputs[0].value,
-                        position: inputs[1].value,
-                        contact: inputs[2].value,
-                        note: inputs[3].value
-                    });
-                }
-            });
-
-            // 收集走访记录
-            const visits = [];
-            document.querySelectorAll('.visit-record').forEach(record => {
-                visits.push({
-                    date: record.querySelector('.visit-date').value,
-                    title: record.querySelector('.visit-title').value,
-                    participants: record.querySelector('.visit-participants').value,
-                    discussion: record.querySelector('.visit-discussion').value,
-                    keyInfo: record.querySelector('.visit-keyinfo').value,
-                    nextSteps: record.querySelector('.visit-nextsteps').value
-                });
-            });
-
-            // 生成Markdown
-            const markdown = generateMarkdown(formData, contacts, visits);
+            // 使用getMarkdownContent函数获取内容
+            const markdown = window.getMarkdownContent();
+            const filename = window.getFilename();
 
             // 下载文件
-            downloadFile(markdown, originalFileName);
+            downloadFile(markdown, filename);
 
             // 显示成功消息
             const successMsg = document.getElementById('successMessage');
-            successMsg.style.display = 'block';
-            setTimeout(() => {
-                successMsg.style.display = 'none';
-            }, 3000);
-        });
+            if (successMsg) {
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 3000);
+            }
+        }
 
         // 生成Markdown内容
         function generateMarkdown(data, contacts, visits) {
