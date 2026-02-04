@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线编辑 - 团队调研记录</title>
+    <style>
+        /* 复用 edit-research.html 的样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .mode-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #ef6c00;
+            border-left: 4px solid #ef6c00;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 在线编辑调研记录</h1>
+            <div class="mode-indicator" id="modeIndicator">检测中...</div>
+            <br>
+            <a href="javascript:history.back()" class="back-button">← 返回</a>
+        </div>
+
+        <div class="form-container">
+            <div id="onlineMode" style="display: none;">
+                <div class="alert alert-info">
+                    <strong>🌐 在线模式</strong> - 使用 GitHub API 直接保存到仓库
+                </div>
+
+                <div id="tokenSection">
+                    <p>首次使用需要配置 GitHub Token：</p>
+                    <button class="btn btn-primary" onclick="setupToken()">配置 Token</button>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                        Token 将保存在浏览器中，仅用于编辑功能。
+                    </p>
+                </div>
+
+                <div id="editorSection" style="display: none;">
+                    <iframe id="editorFrame"></iframe>
+                    <button class="btn btn-primary" onclick="saveOnline()" id="saveButton" style="margin-top: 20px; width: 100%;">
+                        💾 保存到 GitHub
+                    </button>
+                </div>
+            </div>
+
+            <div id="localMode" style="display: none;">
+                <div class="alert alert-warning">
+                    <strong>💻 本地模式</strong> - 使用本地文件系统
+                </div>
+                <p>检测到您在本地环境，将使用原有的编辑方式...</p>
+                <iframe id="localEditorFrame"></iframe>
+            </div>
+
+            <div id="loading">
+                <p style="text-align: center; padding: 50px; color: #999;">
+                    正在检测环境...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="./scripts/github-api.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const file = urlParams.get('file');
+
+        // 检测是否为在线环境
+        const isOnline = window.location.protocol === 'https:' || window.location.hostname !== 'localhost';
+        const tokenManager = new TokenManager();
+
+        // 初始化
+        if (isOnline) {
+            document.getElementById('modeIndicator').textContent = '🌐 在线模式';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('onlineMode').style.display = 'block';
+
+            // 检查是否已有 token
+            if (tokenManager.hasToken()) {
+                document.getElementById('tokenSection').style.display = 'none';
+                document.getElementById('editorSection').style.display = 'block';
+                loadEditor();
+            }
+        } else {
+            document.getElementById('modeIndicator').textContent = '💻 本地模式';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('localMode').style.display = 'block';
+
+            // 加载本地编辑器
+            document.getElementById('localEditorFrame').src = `edit-research.html?${window.location.search.substring(1)}`;
+        }
+
+        async function setupToken() {
+            const token = await tokenManager.promptToken();
+            if (token) {
+                // 验证 token
+                const api = new GitHubAPI(token, 'EAI-Tech-LiAuto', 'team-memory');
+                const isValid = await api.validateToken();
+
+                if (isValid) {
+                    alert('✅ Token 配置成功！');
+                    document.getElementById('tokenSection').style.display = 'none';
+                    document.getElementById('editorSection').style.display = 'block';
+                    loadEditor();
+                } else {
+                    alert('❌ Token 无效，请检查后重试');
+                    tokenManager.removeToken();
+                }
+            }
+        }
+
+        function loadEditor() {
+            // 加载编辑器 iframe
+            const editorFrame = document.getElementById('editorFrame');
+            editorFrame.src = `edit-research.html?${window.location.search.substring(1)}&mode=online`;
+        }
+
+        async function saveOnline() {
+            const button = document.getElementById('saveButton');
+            button.disabled = true;
+            button.textContent = '⏳ 保存中...';
+
+            try {
+                const token = tokenManager.getToken();
+                const api = new GitHubAPI(token, 'EAI-Tech-LiAuto', 'team-memory');
+
+                // 从 iframe 获取编辑器内容
+                const editorFrame = document.getElementById('editorFrame');
+                const markdown = editorFrame.contentWindow.getMarkdownContent();
+                const filename = editorFrame.contentWindow.getFilename();
+                const filePath = `research/companies/${filename}`;
+
+                // 获取文件的 SHA（如果存在）
+                let sha = null;
+                try {
+                    const fileData = await api.getFile(filePath);
+                    sha = fileData.sha;
+                } catch (error) {
+                    // 文件不存在，创建新文件
+                }
+
+                // 保存文件
+                await api.saveFile(
+                    filePath,
+                    markdown,
+                    `update: 更新调研记录 - ${filename}\n\n通过在线编辑器更新`,
+                    sha
+                );
+
+                alert('✅ 保存成功！\n\n文件已提交到 GitHub。\n刷新页面即可查看更新。');
+
+                // 可选：自动返回
+                // setTimeout(() => window.location.href = 'index.html', 1500);
+
+            } catch (error) {
+                alert(`❌ 保存失败：${error.message}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = '💾 保存到 GitHub';
+            }
+        }
+    </script>
+</body>
+</html>
