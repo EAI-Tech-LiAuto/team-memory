@@ -92,6 +92,9 @@ ${context}
 class GroqKeyManager {
     constructor() {
         this.storageKey = 'groq_api_key';
+        // 团队共享Key（由管理员配置）
+        // 如果配置了此Key，所有团队成员无需单独注册
+        this.teamSharedKey = ''; // 管理员：在这里填写团队共享的Groq API Key
     }
 
     saveKey(apiKey) {
@@ -99,7 +102,18 @@ class GroqKeyManager {
     }
 
     getKey() {
-        return localStorage.getItem(this.storageKey);
+        // 优先使用用户自己配置的Key
+        const userKey = localStorage.getItem(this.storageKey);
+        if (userKey) {
+            return userKey;
+        }
+
+        // 如果用户没有配置，使用团队共享Key
+        if (this.teamSharedKey) {
+            return this.teamSharedKey;
+        }
+
+        return null;
     }
 
     removeKey() {
@@ -108,6 +122,10 @@ class GroqKeyManager {
 
     hasKey() {
         return !!this.getKey();
+    }
+
+    isUsingTeamKey() {
+        return !localStorage.getItem(this.storageKey) && !!this.teamSharedKey;
     }
 
     async promptKey() {
@@ -126,6 +144,11 @@ class GroqKeyManager {
                 z-index: 10000;
             `;
 
+            const usingTeamKey = this.isUsingTeamKey();
+            const promptMessage = usingTeamKey
+                ? '团队已配置共享API Key，直接使用即可。<br>如果要使用个人Key，请在下方配置：'
+                : '使用AI助手需要配置Groq API Key';
+
             modal.innerHTML = `
                 <div style="
                     background: white;
@@ -137,9 +160,10 @@ class GroqKeyManager {
                 ">
                     <h2 style="margin: 0 0 15px 0; color: #333;">🤖 配置 Groq API Key</h2>
                     <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
-                        使用AI助手需要配置Groq API Key（完全免费）
+                        ${promptMessage}
                     </p>
 
+                    ${usingTeamKey ? '' : `
                     <div style="background: #f0f7ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                         <strong style="color: #1976d2;">📝 如何获取？</strong>
                         <ol style="margin: 10px 0 0 20px; color: #666; line-height: 1.8;">
@@ -150,11 +174,22 @@ class GroqKeyManager {
                             <li>复制生成的 key</li>
                         </ol>
                     </div>
+                    `}
+
+                    ${usingTeamKey ? `
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                        <strong style="color: #2e7d32;">✅ 团队共享Key已配置</strong>
+                        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">
+                            你可以直接使用，无需配置个人Key。<br>
+                            如果想使用个人Key，可以在下方配置（可选）。
+                        </p>
+                    </div>
+                    ` : ''}
 
                     <input
                         type="password"
                         id="groqApiKey"
-                        placeholder="粘贴你的 API Key（gsk_...）"
+                        placeholder="${usingTeamKey ? '（可选）配置个人API Key' : '粘贴你的 API Key（gsk_...）'}"
                         style="
                             width: 100%;
                             padding: 12px;
@@ -167,6 +202,19 @@ class GroqKeyManager {
                     />
 
                     <div style="display: flex; gap: 10px;">
+                        ${usingTeamKey ? `
+                        <button id="useTeamKey" style="
+                            flex: 1;
+                            padding: 12px;
+                            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            font-weight: bold;
+                        ">使用团队Key</button>
+                        ` : ''}
                         <button id="saveGroqKey" style="
                             flex: 1;
                             padding: 12px;
@@ -177,7 +225,7 @@ class GroqKeyManager {
                             cursor: pointer;
                             font-size: 16px;
                             font-weight: bold;
-                        ">保存</button>
+                        ">${usingTeamKey ? '使用个人Key' : '保存'}</button>
                         <button id="cancelGroqKey" style="
                             padding: 12px 20px;
                             background: white;
@@ -200,6 +248,14 @@ class GroqKeyManager {
             const input = modal.querySelector('#groqApiKey');
             const saveBtn = modal.querySelector('#saveGroqKey');
             const cancelBtn = modal.querySelector('#cancelGroqKey');
+            const useTeamBtn = modal.querySelector('#useTeamKey');
+
+            if (useTeamBtn) {
+                useTeamBtn.onclick = () => {
+                    document.body.removeChild(modal);
+                    resolve(this.teamSharedKey);
+                };
+            }
 
             saveBtn.onclick = () => {
                 const key = input.value.trim();
@@ -207,6 +263,10 @@ class GroqKeyManager {
                     this.saveKey(key);
                     document.body.removeChild(modal);
                     resolve(key);
+                } else if (usingTeamKey) {
+                    // 如果没输入但有团队Key，就使用团队Key
+                    document.body.removeChild(modal);
+                    resolve(this.teamSharedKey);
                 } else {
                     alert('请输入有效的 API Key');
                 }
@@ -214,7 +274,7 @@ class GroqKeyManager {
 
             cancelBtn.onclick = () => {
                 document.body.removeChild(modal);
-                resolve(null);
+                resolve(usingTeamKey ? this.teamSharedKey : null);
             };
 
             // 按Enter保存
@@ -224,7 +284,9 @@ class GroqKeyManager {
                 }
             };
 
-            input.focus();
+            if (!usingTeamKey) {
+                input.focus();
+            }
         });
     }
 }
