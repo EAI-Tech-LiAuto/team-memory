@@ -460,6 +460,7 @@
                 <h2 class="section-title">📱 快速导航</h2>
                 <div class="quick-links">
                     <a href="add-research-form.html" class="quick-link" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">➕ 添加调研记录</a>
+                    <a href="https://li.feishu.cn/wiki/JrbZwUDn1i0IOHkeZYec7Ycrngh" class="quick-link" target="_blank" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);">📥 信息输入</a>
                     <a href="viewer.html?file=./topics/scenarios/README.md" class="quick-link">🏠 应用场景</a>
                     <a href="viewer.html?file=./topics/产品规划/README.md" class="quick-link">📊 产品规划</a>
                     <a href="viewer.html?file=./topics/技术方案/README.md" class="quick-link">🔧 技术方案</a>
@@ -587,6 +588,79 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <div class="section" id="research">
+                <h2 class="section-title">🔍 行业调研</h2>
+
+                <div class="research-filters">
+                    <div class="filter-group">
+                        <label>类型筛选:</label>
+                        <select class="filter-select" id="typeFilter" onchange="filterResearch()">
+                            <option value="all">全部</option>
+                            <option value="企业">🏢 企业</option>
+                            <option value="高校">🎓 高校</option>
+                            <option value="专家">👤 专家</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>状态筛选:</label>
+                        <select class="filter-select" id="statusFilter" onchange="filterResearch()">
+                            <option value="all">全部</option>
+                            <option value="已接洽">已接洽</option>
+                            <option value="待跟进">待跟进</option>
+                            <option value="持续关注">持续关注</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="research-cards">
+                    <div class="research-card" data-type="企业" data-status="待跟进"
+                         onclick="window.open('viewer.html?file=./research/companies/深圳市高工智能咨询有限公司.md')">
+                        <div class="card-header">
+                            <div class="card-title">深圳市高工智能咨询有限公司</div>
+                            <div class="card-date">2026-01-30</div>
+                        </div>
+                        <div class="research-type">🏢 企业</div>
+                        <div class="research-location">深圳市</div>
+                        <div class="card-meta" style="margin-top: 8px;">
+                            <span class="status-badge status-待跟进">待跟进</span>
+                        </div>
+                        <div class="card-tags" style="margin-top: 8px;">
+                            <span class="tag">智能网联汽车</span>
+                            <span class="tag">产业研究</span>
+                            <span class="tag">咨询</span>
+                        </div>
+                        <div class="card-summary">
+                            高工智能专注于智能网联汽车产业研究与传媒，提供专业的咨询服务。
+                        </div>
+                    </div>
+
+                    <div class="research-card" data-type="企业" data-status="已接洽"
+                         onclick="window.open('viewer.html?file=./research/companies/示例科技公司.md')">
+                        <div class="card-header">
+                            <div class="card-title">示例科技公司</div>
+                            <div class="card-date">2026-01-29</div>
+                        </div>
+                        <div class="research-type">🏢 企业</div>
+                        <div class="research-location">北京市</div>
+                        <div class="card-meta" style="margin-top: 8px;">
+                            <span class="status-badge status-已接洽">已接洽</span>
+                        </div>
+                        <div class="card-tags" style="margin-top: 8px;">
+                            <span class="tag">robotics</span>
+                            <span class="tag">AI</span>
+                            <span class="tag">示例</span>
+                        </div>
+                        <div class="card-summary">
+                            家用服务机器人、工业协作机器人。核心技术：计算机视觉、运动控制、自然语言处理
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                    <strong>💡 提示:</strong> 点击卡片可查看完整调研记录，或使用 <a href="add-research-form.html" style="color: #667eea;">添加调研记录</a> 表单创建新的调研内容
                 </div>
             </div>
 
