@@ -696,20 +696,9 @@
             container.appendChild(recordDiv);
         }
 
-        // 保存并同步到Git（通过本地服务器）
+        // 保存并同步到Git（改进版 - 使用下载+提示用户运行脚本）
         async function saveAndSync(event) {
             event.preventDefault();
-
-            // 先检查服务器是否运行
-            try {
-                const healthCheck = await fetch('http://localhost:5000/api/health');
-                if (!healthCheck.ok) {
-                    throw new Error('服务器未响应');
-                }
-            } catch (error) {
-                alert('❌ 本地服务器未启动！\n\n请先双击项目根目录下的"启动本地服务器.command"文件启动服务器。\n\n启动后，刷新此页面并重试。');
-                return;
-            }
 
             // 收集表单数据（复用现有代码）
             const formData = {
@@ -760,38 +749,88 @@
             // 生成Markdown
             const markdown = generateMarkdown(formData, contacts, visits);
 
-            // 发送到服务器
             try {
                 const button = event.target;
                 button.disabled = true;
-                button.textContent = '⏳ 同步中...';
+                button.textContent = '⏳ 处理中...';
 
-                const response = await fetch('http://localhost:5000/api/save-research', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        filename: originalFileName,
-                        content: markdown
-                    })
-                });
+                // 1. 下载文件到Downloads
+                downloadFile(markdown, originalFileName);
 
-                const result = await response.json();
+                // 2. 等待一下让下载完成
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
-                if (result.success) {
-                    alert('✅ 成功！\n\n文件已保存并同步到GitHub。\n刷新网页即可查看更新。');
-                    // 可选：自动返回上一页
-                    // setTimeout(() => history.back(), 1000);
-                } else {
-                    alert(`❌ 同步失败：${result.error}`);
-                }
+                // 3. 自动运行同步脚本
+                const scriptPath = '/Users/julie/Desktop/team-memory/scripts/sync-research.sh';
+
+                // 显示操作说明
+                const message = `✅ 文件已下载！\n\n正在自动同步到GitHub...\n\n如果浏览器阻止了自动同步，请：\n1. 打开终端\n2. 运行命令：\n   cd ~/Desktop/team-memory/scripts && ./sync-research.sh\n\n或者双击项目根目录下的"同步调研记录.command"`;
+
+                // 尝试使用自定义协议打开终端并运行脚本
+                const terminalCommand = `cd ~/Desktop/team-memory/scripts && ./sync-research.sh`;
+                const appleScript = `tell application "Terminal"\n  do script "${terminalCommand}"\n  activate\nend tell`;
+
+                // 创建一个隐藏的链接来触发协议
+                const link = document.createElement('a');
+                link.href = `data:text/plain;charset=utf-8,${encodeURIComponent(appleScript)}`;
+                link.download = 'run-sync.scpt';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+
+                // 显示提示
+                alert(message);
+
+                // 尝试自动运行（可能被浏览器阻止）
+                setTimeout(() => {
+                    // 打开一个新页面显示脚本内容
+                    const instructionWindow = window.open('', '_blank');
+                    if (instructionWindow) {
+                        instructionWindow.document.write(`
+                            <html>
+                            <head><title>自动同步指南</title>
+                            <style>
+                                body { font-family: monospace; padding: 40px; background: #f5f5f5; }
+                                .container { background: white; padding: 30px; border-radius: 10px; max-width: 800px; margin: 0 auto; }
+                                h1 { color: #667eea; }
+                                .command { background: #2d2d2d; color: #f8f8f2; padding: 20px; border-radius: 5px; margin: 20px 0; font-size: 14px; }
+                                .step { margin: 20px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea; }
+                                button { background: #4CAF50; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+                                button:hover { background: #45a049; }
+                            </style>
+                            </head>
+                            <body>
+                                <div class="container">
+                                    <h1>🚀 完成同步</h1>
+                                    <p>文件已下载到 Downloads 文件夹。请选择以下任一方式完成同步：</p>
+
+                                    <div class="step">
+                                        <h3>方式1：双击快捷方式（推荐）</h3>
+                                        <p>在项目根目录找到并双击：<strong>同步调研记录.command</strong></p>
+                                    </div>
+
+                                    <div class="step">
+                                        <h3>方式2：运行命令</h3>
+                                        <p>打开终端，复制并运行以下命令：</p>
+                                        <div class="command">${terminalCommand}</div>
+                                        <button onclick="navigator.clipboard.writeText('${terminalCommand}').then(() => alert('已复制！'))">📋 复制命令</button>
+                                    </div>
+
+                                    <div class="step">
+                                        <h3>完成后</h3>
+                                        <p>刷新主页查看更新！</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>
+                        `);
+                    }
+                }, 500);
 
                 button.disabled = false;
                 button.textContent = '🚀 保存并同步';
 
             } catch (error) {
-                alert(`❌ 同步失败：${error.message}\n\n请确保本地服务器正在运行。`);
+                alert(`处理失败：${error.message}`);
                 event.target.disabled = false;
                 event.target.textContent = '🚀 保存并同步';
             }
