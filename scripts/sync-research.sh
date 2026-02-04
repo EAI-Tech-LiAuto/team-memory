@@ -3,6 +3,7 @@
 
 REPO_DIR="$HOME/Desktop/team-memory"
 DOWNLOADS_DIR="$HOME/Downloads"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "🔍 正在查找最新下载的调研文件..."
 
@@ -41,12 +42,27 @@ echo "✅ 文件已复制到仓库"
 # 切换到仓库目录
 cd "$REPO_DIR" || exit 1
 
+# 运行 update-index.py 自动更新主页
+echo "🔄 正在更新主页索引..."
+if [ -f "$SCRIPT_DIR/update-index.py" ]; then
+    python3 "$SCRIPT_DIR/update-index.py"
+    if [ $? -eq 0 ]; then
+        echo "✅ 主页索引已更新"
+    else
+        echo "⚠️  主页索引更新失败，但文件已同步"
+    fi
+else
+    echo "⚠️  未找到 update-index.py，跳过主页更新"
+fi
+
 # Git 操作
 echo "📤 正在提交到Git..."
-git add "research/"
+git add research/ index.html
 git commit -m "update: 更新${CATEGORY}调研信息 - $FILENAME
 
 通过自动化脚本更新
+- 同步调研记录文件
+- 自动更新主页卡片
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
