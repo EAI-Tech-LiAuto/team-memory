@@ -7,7 +7,7 @@ class GroqAPI {
     constructor(apiKey) {
         this.apiKey = apiKey;
         this.baseURL = 'https://api.groq.com/openai/v1';
-        this.model = 'llama-3.1-70b-versatile'; // 免费且强大的模型
+        this.model = 'llama-3.3-70b-versatile'; // 免费且强大的模型（2024最新版本）
     }
 
     /**
