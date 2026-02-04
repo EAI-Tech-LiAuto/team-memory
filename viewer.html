@@ -330,8 +330,15 @@ git push</pre>
         const VIEWER_VERSION = 'v1.4'; // 版本号，用于调试 - 新增：编辑按钮功能
         let currentFilePath = ''; // 存储当前文件路径
 
-        // 显示编辑弹窗
+        // 显示编辑弹窗或跳转到编辑页面
         function showEditModal() {
+            // 如果是调研记录，跳转到在线编辑页面
+            if (currentFilePath.startsWith('research/')) {
+                window.location.href = `edit-research.html?file=./${currentFilePath}`;
+                return;
+            }
+
+            // 其他文件显示本地编辑提示
             const modal = document.getElementById('editModal');
             const filePathBox = document.getElementById('localFilePath');
 

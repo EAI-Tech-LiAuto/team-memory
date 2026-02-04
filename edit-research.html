@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑调研记录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 50px;
+        }
+
+        .tag-item {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag-item button {
+            background: none;
+            border: none;
+            color: #1976d2;
+            cursor: pointer;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+
+        .tag-item button:hover {
+            color: #d32f2f;
+        }
+
+        .tag-input-field {
+            flex: 1;
+            border: none;
+            outline: none;
+            min-width: 100px;
+            padding: 6px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: #999;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #777;
+        }
+
+        .success-message {
+            display: none;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .help-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .contact-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .contact-table th,
+        .contact-table td {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
+
+        .contact-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .contact-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .add-contact-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-contact-btn:hover {
+            background: #5568d3;
+        }
+
+        .visit-record {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .visit-record h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .remove-visit-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remove-visit-btn:hover {
+            background: #d32f2f;
+        }
+
+        .add-visit-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-visit-btn:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 编辑调研记录</h1>
+            <p>在线编辑调研信息</p>
+            <a href="javascript:history.back()" class="back-button">← 返回</a>
+        </div>
+
+        <div class="form-container">
+            <div class="loading" id="loading">正在加载数据...</div>
+
+            <form id="editForm" style="display: none;">
+                <div class="success-message" id="successMessage">
+                    ✅ 文件已生成！即将自动下载...
+                </div>
+
+                <h2 class="section-title">基本信息</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">企业/机构名称 *</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">类型 *</label>
+                        <select id="type" required>
+                            <option value="企业">企业</option>
+                            <option value="高校">高校</option>
+                            <option value="专家">专家</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">所在地 *</label>
+                        <input type="text" id="location" placeholder="例如：深圳市" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">状态 *</label>
+                        <select id="status" required>
+                            <option value="待跟进">待跟进</option>
+                            <option value="已接洽">已接洽</option>
+                            <option value="持续关注">持续关注</option>
+                            <option value="已合作">已合作</option>
+                            <option value="暂停">暂停</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="industry">行业领域</label>
+                    <input type="text" id="industry" placeholder="例如：智能网联汽车、产业研究">
+                </div>
+
+                <div class="form-group">
+                    <label>标签</label>
+                    <div class="tags-input" id="tagsContainer">
+                        <input type="text" class="tag-input-field" id="tagInput" placeholder="输入标签后按回车">
+                    </div>
+                    <div class="help-text">按回车键添加标签</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="foundedDate">成立时间</label>
+                        <input type="text" id="foundedDate" placeholder="例如：2020年">
+                    </div>
+                    <div class="form-group">
+                        <label for="scale">规模</label>
+                        <input type="text" id="scale" placeholder="例如：100-500人">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="website">官网</label>
+                        <input type="url" id="website" placeholder="https://">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">详细地址</label>
+                        <input type="text" id="address" placeholder="具体地址">
+                    </div>
+                </div>
+
+                <h2 class="section-title">公司简介</h2>
+                <div class="form-group">
+                    <label for="description">简介</label>
+                    <textarea id="description" rows="4" placeholder="简要描述企业/机构的主要业务和特点"></textarea>
+                </div>
+
+                <h2 class="section-title">业务范围</h2>
+                <div class="form-group">
+                    <label for="coreProducts">核心产品</label>
+                    <textarea id="coreProducts" rows="3" placeholder="列出主要产品"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="techDirection">技术方向</label>
+                    <textarea id="techDirection" rows="3" placeholder="主要技术领域"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="scenarios">应用场景</label>
+                    <textarea id="scenarios" rows="3" placeholder="产品应用场景"></textarea>
+                </div>
+
+                <h2 class="section-title">联系人</h2>
+                <table class="contact-table" id="contactTable">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>职位</th>
+                            <th>联系方式</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contactTableBody">
+                    </tbody>
+                </table>
+                <button type="button" class="add-contact-btn" onclick="addContactRow()">+ 添加联系人</button>
+
+                <h2 class="section-title">走访记录</h2>
+                <div id="visitRecordsContainer"></div>
+                <button type="button" class="add-visit-btn" onclick="addVisitRecord()">+ 添加走访记录</button>
+
+                <h2 class="section-title">相关资料</h2>
+                <div class="form-group">
+                    <label for="materials">相关资料链接</label>
+                    <textarea id="materials" rows="4" placeholder="每行一个链接或资料说明"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="history.back()">取消</button>
+                    <button type="submit" class="btn btn-primary">💾 保存并下载</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let tags = [];
+        let originalFileName = '';
+        let originalFilePath = '';
+
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const file = urlParams.get('file');
+
+        // 加载现有数据
+        if (file) {
+            let filePath = file.startsWith('./') ? file.substring(2) : file;
+            originalFilePath = filePath;
+            originalFileName = filePath.split('/').pop();
+
+            const rawUrl = `https://raw.githubusercontent.com/EAI-Tech-LiAuto/team-memory/main/${filePath}`;
+
+            fetch(rawUrl)
+                .then(response => response.text())
+                .then(markdown => {
+                    parseAndFillForm(markdown);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('editForm').style.display = 'block';
+                })
+                .catch(error => {
+                    document.getElementById('loading').innerHTML = `<div class="error-message">加载失败: ${error.message}</div>`;
+                });
+        } else {
+            document.getElementById('loading').innerHTML = '<div class="error-message">错误：未指定文件路径</div>';
+        }
+
+        // 解析Markdown并填充表单
+        function parseAndFillForm(markdown) {
+            const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+            if (!frontmatterMatch) return;
+
+            const frontmatter = frontmatterMatch[1];
+            const content = frontmatterMatch[2];
+
+            // 解析YAML frontmatter
+            const metadata = {};
+            frontmatter.split('\n').forEach(line => {
+                const match = line.match(/^([^:]+):\s*(.+)$/);
+                if (match) {
+                    let value = match[2].trim();
+                    // 处理数组格式 [tag1, tag2]
+                    if (value.startsWith('[') && value.endsWith(']')) {
+                        value = value.slice(1, -1).split(',').map(s => s.trim());
+                    }
+                    metadata[match[1].trim()] = value;
+                }
+            });
+
+            // 填充基本信息
+            document.getElementById('name').value = metadata.name || '';
+            document.getElementById('type').value = metadata.type || '企业';
+            document.getElementById('location').value = metadata.location || '';
+            document.getElementById('status').value = metadata.status || '待跟进';
+            document.getElementById('industry').value = metadata.industry || '';
+
+            // 填充标签
+            if (Array.isArray(metadata.tags)) {
+                tags = metadata.tags;
+                renderTags();
+            }
+
+            // 解析正文内容
+            parseContent(content);
+        }
+
+        // 解析正文内容
+        function parseContent(content) {
+            // 提取基本信息
+            const foundedMatch = content.match(/\*\*成立时间\*\*:\s*(.+)/);
+            if (foundedMatch) document.getElementById('foundedDate').value = foundedMatch[1].trim();
+
+            const scaleMatch = content.match(/\*\*规模\*\*:\s*(.+)/);
+            if (scaleMatch) document.getElementById('scale').value = scaleMatch[1].trim();
+
+            const websiteMatch = content.match(/\*\*官网\*\*:\s*(.+)/);
+            if (websiteMatch) document.getElementById('website').value = websiteMatch[1].trim();
+
+            const addressMatch = content.match(/\*\*地址\*\*:\s*(.+)/);
+            if (addressMatch) document.getElementById('address').value = addressMatch[1].trim();
+
+            // 提取公司简介
+            const descMatch = content.match(/## 公司简介\s*\n\s*\n(.+?)(?=\n\n##|\n##|$)/s);
+            if (descMatch) document.getElementById('description').value = descMatch[1].trim();
+
+            // 提取业务范围
+            const coreProductsMatch = content.match(/\*\*核心产品\*\*:\s*(.+)/);
+            if (coreProductsMatch) document.getElementById('coreProducts').value = coreProductsMatch[1].trim();
+
+            const techMatch = content.match(/\*\*技术方向\*\*:\s*(.+)/);
+            if (techMatch) document.getElementById('techDirection').value = techMatch[1].trim();
+
+            const scenariosMatch = content.match(/\*\*应用场景\*\*:\s*(.+)/);
+            if (scenariosMatch) document.getElementById('scenarios').value = scenariosMatch[1].trim();
+
+            // 提取联系人表格
+            parseContactTable(content);
+
+            // 提取走访记录
+            parseVisitRecords(content);
+
+            // 提取相关资料
+            const materialsMatch = content.match(/## 相关资料\s*\n(.+?)(?=\n---|\n##|$)/s);
+            if (materialsMatch) {
+                const materials = materialsMatch[1].trim().split('\n').filter(line => line.trim() && line.trim() !== '-');
+                document.getElementById('materials').value = materials.map(line => line.replace(/^-\s*/, '')).join('\n');
+            }
+        }
+
+        // 解析联系人表格
+        function parseContactTable(content) {
+            const tableMatch = content.match(/## 联系人\s*\n\|.+\|\s*\n\|[-\s|]+\|\s*\n((?:\|.+\|\s*\n)*)/);
+            if (tableMatch) {
+                const rows = tableMatch[1].trim().split('\n');
+                rows.forEach(row => {
+                    const cells = row.split('|').map(c => c.trim()).filter(c => c);
+                    if (cells.length >= 4 && cells[0]) {
+                        addContactRow(cells[0], cells[1], cells[2], cells[3]);
+                    }
+                });
+            }
+        }
+
+        // 解析走访记录
+        function parseVisitRecords(content) {
+            const visitSection = content.match(/## 走访记录\s*\n([\s\S]+?)(?=\n## |$)/);
+            if (!visitSection) return;
+
+            const visits = visitSection[1].split(/###\s+/).filter(v => v.trim());
+            visits.forEach(visit => {
+                const lines = visit.split('\n');
+                const titleLine = lines[0].trim();
+
+                let visitDate = '', visitTitle = '';
+                const dateMatch = titleLine.match(/(\d{4}-\d{2}-\d{2})\s+(.+)/);
+                if (dateMatch) {
+                    visitDate = dateMatch[1];
+                    visitTitle = dateMatch[2];
+                }
+
+                let participants = '', discussion = '', keyInfo = '', nextSteps = '';
+
+                const participantsMatch = visit.match(/\*\*参与人员\*\*:\s*(.+)/);
+                if (participantsMatch) participants = participantsMatch[1].trim();
+
+                const discussionMatch = visit.match(/\*\*讨论内容\*\*:\s*\n([\s\S]+?)(?=\*\*关键信息|$)/);
+                if (discussionMatch) discussion = discussionMatch[1].trim();
+
+                const keyInfoMatch = visit.match(/\*\*关键信息\*\*:\s*\n([\s\S]+?)(?=\*\*后续计划|$)/);
+                if (keyInfoMatch) keyInfo = keyInfoMatch[1].trim();
+
+                const nextStepsMatch = visit.match(/\*\*后续计划\*\*:\s*\n([\s\S]+?)(?=###|$)/);
+                if (nextStepsMatch) nextSteps = nextStepsMatch[1].trim();
+
+                if (visitDate || visitTitle) {
+                    addVisitRecord(visitDate, visitTitle, participants, discussion, keyInfo, nextSteps);
+                }
+            });
+        }
+
+        // 标签管理
+        const tagInput = document.getElementById('tagInput');
+        tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = this.value.trim();
+                if (value && !tags.includes(value)) {
+                    tags.push(value);
+                    renderTags();
+                    this.value = '';
+                }
+            }
+        });
+
+        function renderTags() {
+            const container = document.getElementById('tagsContainer');
+            const input = document.getElementById('tagInput');
+
+            container.innerHTML = '';
+            tags.forEach((tag, index) => {
+                const tagItem = document.createElement('div');
+                tagItem.className = 'tag-item';
+                tagItem.innerHTML = `
+                    ${tag}
+                    <button type="button" onclick="removeTag(${index})">×</button>
+                `;
+                container.appendChild(tagItem);
+            });
+            container.appendChild(input);
+        }
+
+        function removeTag(index) {
+            tags.splice(index, 1);
+            renderTags();
+        }
+
+        // 联系人管理
+        function addContactRow(name = '', position = '', contact = '', note = '') {
+            const tbody = document.getElementById('contactTableBody');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" value="${name}" placeholder="姓名"></td>
+                <td><input type="text" value="${position}" placeholder="职位"></td>
+                <td><input type="text" value="${contact}" placeholder="电话/邮箱"></td>
+                <td><input type="text" value="${note}" placeholder="备注"></td>
+                <td><button type="button" onclick="this.closest('tr').remove()" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">删除</button></td>
+            `;
+        }
+
+        // 走访记录管理
+        let visitRecordCount = 0;
+        function addVisitRecord(date = '', title = '', participants = '', discussion = '', keyInfo = '', nextSteps = '') {
+            const container = document.getElementById('visitRecordsContainer');
+            const recordId = `visit-${visitRecordCount++}`;
+
+            const recordDiv = document.createElement('div');
+            recordDiv.className = 'visit-record';
+            recordDiv.id = recordId;
+            recordDiv.innerHTML = `
+                <h4>走访记录 #${visitRecordCount}</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>日期</label>
+                        <input type="date" class="visit-date" value="${date}">
+                    </div>
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" class="visit-title" value="${title}" placeholder="例如：初次接洽">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>参与人员</label>
+                    <input type="text" class="visit-participants" value="${participants}" placeholder="例如：李君、张三">
+                </div>
+                <div class="form-group">
+                    <label>讨论内容</label>
+                    <textarea class="visit-discussion" rows="3">${discussion}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>关键信息</label>
+                    <textarea class="visit-keyinfo" rows="3">${keyInfo}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>后续计划</label>
+                    <textarea class="visit-nextsteps" rows="3">${nextSteps}</textarea>
+                </div>
+                <button type="button" class="remove-visit-btn" onclick="document.getElementById('${recordId}').remove()">删除此记录</button>
+            `;
+
+            container.appendChild(recordDiv);
+        }
+
+        // 表单提交
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 收集表单数据
+            const formData = {
+                name: document.getElementById('name').value,
+                type: document.getElementById('type').value,
+                industry: document.getElementById('industry').value,
+                location: document.getElementById('location').value,
+                status: document.getElementById('status').value,
+                tags: tags,
+                foundedDate: document.getElementById('foundedDate').value,
+                scale: document.getElementById('scale').value,
+                website: document.getElementById('website').value,
+                address: document.getElementById('address').value,
+                description: document.getElementById('description').value,
+                coreProducts: document.getElementById('coreProducts').value,
+                techDirection: document.getElementById('techDirection').value,
+                scenarios: document.getElementById('scenarios').value,
+                materials: document.getElementById('materials').value
+            };
+
+            // 收集联系人
+            const contacts = [];
+            document.querySelectorAll('#contactTableBody tr').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs[0].value) {
+                    contacts.push({
+                        name: inputs[0].value,
+                        position: inputs[1].value,
+                        contact: inputs[2].value,
+                        note: inputs[3].value
+                    });
+                }
+            });
+
+            // 收集走访记录
+            const visits = [];
+            document.querySelectorAll('.visit-record').forEach(record => {
+                visits.push({
+                    date: record.querySelector('.visit-date').value,
+                    title: record.querySelector('.visit-title').value,
+                    participants: record.querySelector('.visit-participants').value,
+                    discussion: record.querySelector('.visit-discussion').value,
+                    keyInfo: record.querySelector('.visit-keyinfo').value,
+                    nextSteps: record.querySelector('.visit-nextsteps').value
+                });
+            });
+
+            // 生成Markdown
+            const markdown = generateMarkdown(formData, contacts, visits);
+
+            // 下载文件
+            downloadFile(markdown, originalFileName);
+
+            // 显示成功消息
+            const successMsg = document.getElementById('successMessage');
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        });
+
+        // 生成Markdown内容
+        function generateMarkdown(data, contacts, visits) {
+            let md = `---
+name: ${data.name}
+type: ${data.type}
+industry: ${data.industry}
+location: ${data.location}
+visit_date: ${visits.length > 0 ? visits[0].date : new Date().toISOString().split('T')[0]}
+status: ${data.status}
+tags: [${data.tags.join(', ')}]
+---
+
+# ${data.name}
+
+## 基本信息
+- **全称**: ${data.name}
+- **成立时间**: ${data.foundedDate}
+- **规模**: ${data.scale}
+- **官网**: ${data.website}
+- **地址**: ${data.address}
+
+## 公司简介
+
+${data.description}
+
+## 联系人
+| 姓名 | 职位 | 联系方式 | 备注 |
+|------|------|----------|------|
+`;
+
+            if (contacts.length > 0) {
+                contacts.forEach(c => {
+                    md += `| ${c.name} | ${c.position} | ${c.contact} | ${c.note} |\n`;
+                });
+            } else {
+                md += `|      |      |          |      |\n`;
+            }
+
+            md += `
+## 业务范围
+- **核心产品**: ${data.coreProducts}
+- **技术方向**: ${data.techDirection}
+- **应用场景**: ${data.scenarios}
+
+## 走访记录
+`;
+
+            if (visits.length > 0) {
+                visits.forEach(v => {
+                    md += `
+### ${v.date} ${v.title}
+
+**参与人员**: ${v.participants}
+
+**讨论内容**:
+${v.discussion}
+
+**关键信息**:
+${v.keyInfo}
+
+**后续计划**:
+${v.nextSteps}
+`;
+                });
+            } else {
+                md += `
+### ${new Date().toISOString().split('T')[0]} 初次接洽
+
+**参与人员**:
+
+**讨论内容**:
+- 待补充
+
+**关键信息**:
+- 待补充
+
+**后续计划**:
+- [ ] 待补充
+`;
+            }
+
+            md += `
+## 相关资料
+`;
+            if (data.materials) {
+                const materialLines = data.materials.split('\n').filter(l => l.trim());
+                materialLines.forEach(line => {
+                    md += `- ${line}\n`;
+                });
+            } else {
+                md += `-\n`;
+            }
+
+            md += `
+---
+
+**记录人**: ${visits.length > 0 ? visits[0].participants.split('、')[0] : ''}
+**记录日期**: ${new Date().toISOString().split('T')[0]}
+`;
+
+            return md;
+        }
+
+        // 下载文件
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
