@@ -48,11 +48,117 @@
             font-size: 0.9em;
             margin-top: 10px;
             transition: all 0.3s ease;
+            margin-right: 10px;
         }
 
         .back-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .edit-button {
+            display: inline-block;
+            background: #FF6B6B;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .edit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: #FF5252;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .file-path-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.95em;
+            word-break: break-all;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .copy-button:hover {
+            background: #45a049;
+        }
+
+        .close-button {
+            background: #999;
+            color: white;
+        }
+
+        .close-button:hover {
+            background: #777;
+        }
+
+        .instructions {
+            color: #666;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
         }
 
         .content {
@@ -186,15 +292,86 @@
         <div class="header">
             <h1 id="doc-title">加载中...</h1>
             <a href="index.html" class="back-button">← 返回首页</a>
+            <button class="edit-button" onclick="showEditModal()">📝 编辑此文档</button>
         </div>
         <div class="content">
             <div class="loading">正在加载文档...</div>
         </div>
     </div>
 
+    <!-- 编辑提示弹窗 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>📝 编辑文档</h2>
+            <div class="instructions">
+                <p>请使用您喜欢的文本编辑器打开以下文件进行编辑：</p>
+                <div class="file-path-box" id="localFilePath"></div>
+                <p><strong>编辑完成后的步骤：</strong></p>
+                <ol>
+                    <li>保存文件</li>
+                    <li>在终端中执行以下命令提交更改：
+                        <pre style="background: #2d2d2d; color: #f8f8f2; padding: 10px; border-radius: 5px; margin-top: 10px;">cd ~/Desktop/team-memory
+git add .
+git commit -m "update: 更新调研信息"
+git push</pre>
+                    </li>
+                    <li>刷新此页面查看更新</li>
+                </ol>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button copy-button" onclick="copyFilePath()">📋 复制路径</button>
+                <button class="modal-button close-button" onclick="closeEditModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
     <script>
-        const VIEWER_VERSION = 'v1.3'; // 版本号，用于调试 - 新增：自动重写.md链接
+        const VIEWER_VERSION = 'v1.4'; // 版本号，用于调试 - 新增：编辑按钮功能
+        let currentFilePath = ''; // 存储当前文件路径
+
+        // 显示编辑弹窗
+        function showEditModal() {
+            const modal = document.getElementById('editModal');
+            const filePathBox = document.getElementById('localFilePath');
+
+            // 构建本地文件路径
+            const localPath = `/Users/julie/Desktop/team-memory/${currentFilePath}`;
+            filePathBox.textContent = localPath;
+
+            modal.style.display = 'block';
+        }
+
+        // 关闭编辑弹窗
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.style.display = 'none';
+        }
+
+        // 复制文件路径
+        function copyFilePath() {
+            const filePathBox = document.getElementById('localFilePath');
+            const textToCopy = filePathBox.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const copyButton = document.querySelector('.copy-button');
+                const originalText = copyButton.textContent;
+                copyButton.textContent = '✅ 已复制！';
+                setTimeout(() => {
+                    copyButton.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('复制失败，请手动复制路径');
+            });
+        }
+
+        // 点击弹窗外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
 
         // 简单的markdown转HTML函数（如果marked.js加载失败）
         function simpleMarkdown(text) {
@@ -218,6 +395,9 @@
         } else {
             // 处理文件路径，移除开头的 ./
             let filePath = file.startsWith('./') ? file.substring(2) : file;
+
+            // 保存当前文件路径供编辑按钮使用
+            currentFilePath = filePath;
 
             // 使用GitHub raw URL来获取markdown文件
             const rawUrl = `https://raw.githubusercontent.com/EAI-Tech-LiAuto/team-memory/main/${filePath}`;
