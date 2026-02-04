@@ -324,8 +324,8 @@
                         <input type="text" id="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="type">类型 *</label>
-                        <select id="type" required>
+                        <label for="type">类型</label>
+                        <select id="type">
                             <option value="企业">企业</option>
                             <option value="高校">高校</option>
                             <option value="专家">专家</option>
@@ -335,12 +335,12 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="location">所在地 *</label>
-                        <input type="text" id="location" placeholder="例如：深圳市" required>
+                        <label for="location">所在地</label>
+                        <input type="text" id="location" placeholder="例如：深圳市">
                     </div>
                     <div class="form-group">
-                        <label for="status">状态 *</label>
-                        <select id="status" required>
+                        <label for="status">状态</label>
+                        <select id="status">
                             <option value="待跟进">待跟进</option>
                             <option value="已接洽">已接洽</option>
                             <option value="持续关注">持续关注</option>
@@ -873,6 +873,11 @@ ${v.nextSteps}
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+
+            // 显示下载位置提示
+            setTimeout(() => {
+                alert(`文件已下载！\n\n文件名：${filename}\n下载位置：通常在 ~/Downloads/ 文件夹\n\n请打开 Finder，查看"下载"文件夹，找到这个文件。`);
+            }, 500);
         }
     </script>
 </body>
