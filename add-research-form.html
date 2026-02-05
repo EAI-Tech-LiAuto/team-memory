@@ -430,18 +430,58 @@
 
         function copyToClipboard() {
             const content = document.getElementById('outputContent').textContent;
-            navigator.clipboard.writeText(content).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '✅ 已复制！';
+
+            // 尝试使用现代 Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(content).then(() => {
+                    showCopySuccess();
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    fallbackCopyToClipboard(content);
+                });
+            } else {
+                // 备用方案：使用传统的 execCommand 方法
+                fallbackCopyToClipboard(content);
+            }
+        }
+
+        function showCopySuccess() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 已复制！';
+            btn.style.background = '#4CAF50';
+            setTimeout(() => {
+                btn.textContent = originalText;
                 btn.style.background = '#4CAF50';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#4CAF50';
-                }, 2000);
-            }).catch(err => {
-                alert('复制失败，请手动复制内容');
-            });
+            }, 2000);
+        }
+
+        function fallbackCopyToClipboard(text) {
+            // 创建临时 textarea 元素
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.top = '0';
+            textarea.style.left = '0';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+
+            try {
+                textarea.select();
+                textarea.setSelectionRange(0, text.length); // 兼容移动设备
+                const successful = document.execCommand('copy');
+
+                if (successful) {
+                    showCopySuccess();
+                } else {
+                    alert('复制失败，请手动复制内容。\n\n提示：可以在下方文本框中全选（Cmd+A 或 Ctrl+A）后复制（Cmd+C 或 Ctrl+C）');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('复制失败，请手动复制内容。\n\n提示：可以在下方文本框中全选（Cmd+A 或 Ctrl+A）后复制（Cmd+C 或 Ctrl+C）');
+            } finally {
+                document.body.removeChild(textarea);
+            }
         }
     </script>
 </body>
