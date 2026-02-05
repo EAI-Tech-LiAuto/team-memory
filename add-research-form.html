@@ -277,39 +277,58 @@
                 <button class="copy-btn" onclick="copyToClipboard()">📋 复制到剪贴板</button>
 
                 <div class="instructions">
-                    <h4>📝 如何使用：</h4>
-                    <ol>
-                        <li><strong>复制内容</strong>：点击上方"📋 复制到剪贴板"按钮</li>
-                        <li><strong>创建文件</strong>：
-                            <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
-                                <li>打开 Finder（访达），找到 <code>team-memory</code> 文件夹</li>
-                                <li>进入 <code>research</code> 文件夹</li>
-                                <li>根据企业类型进入对应文件夹（如 <code>companies</code>）</li>
-                                <li>创建新的 <code>.md</code> 文件，文件名为企业名称（如 <code>摩尔芯光.md</code>）</li>
-                                <li><strong>提示</strong>：可以右键 → 新建文本文件，然后改扩展名为 <code>.md</code></li>
-                            </ul>
-                        </li>
-                        <li><strong>粘贴内容</strong>：用文本编辑器打开刚创建的文件，粘贴（Cmd+V）复制的内容并保存</li>
-                        <li><strong>更新索引</strong>：
-                            <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
-                                <li>打开"终端"应用（在启动台或应用程序/实用工具中）</li>
-                                <li>输入：<code>cd ~/Desktop/team-memory</code>（或你存放的位置）然后按回车</li>
-                                <li>输入：<code>python3 scripts/update-index.py</code> 然后按回车</li>
-                            </ul>
-                        </li>
-                        <li><strong>提交到 GitHub</strong>：在终端依次输入：
-                            <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
-                                <li><code>git add .</code></li>
-                                <li><code>git commit -m "feat: 添加XXX调研记录"</code>（XXX改为企业名）</li>
-                                <li><code>git push</code></li>
-                            </ul>
-                        </li>
-                    </ol>
+                    <h4>📝 如何使用生成的内容：</h4>
 
-                    <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
-                        <strong>💡 更简单的方法：</strong><br>
-                        如果觉得上述步骤复杂，可以使用 <a href="edit-research.html" style="color: #667eea; font-weight: bold;">在线编辑器</a>，无需手动创建文件和运行命令！
+                    <div style="margin-bottom: 20px; padding: 15px; background: #e8f5e9; border-left: 4px solid #4CAF50; border-radius: 5px;">
+                        <strong>💡 推荐方法：使用在线编辑器</strong><br>
+                        如果不熟悉终端操作，建议使用 <a href="edit-research.html" style="color: #667eea; font-weight: bold;">在线编辑器</a>，可以直接在浏览器中完成所有操作，无需手动创建文件！
                     </div>
+
+                    <details style="margin-bottom: 15px;">
+                        <summary style="cursor: pointer; font-weight: bold; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                            📖 展开查看手动创建文件的详细步骤（适合熟悉命令行的用户）
+                        </summary>
+                        <div style="padding: 15px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 5px 5px;">
+                            <ol>
+                                <li><strong>复制内容</strong>：点击上方"📋 复制到剪贴板"按钮</li>
+                                <li><strong>创建 .md 文件</strong>（Mac 上有3种方法）：
+                                    <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
+                                        <li><strong>方法1：使用文本编辑</strong>
+                                            <br>→ 打开"文本编辑"应用（启动台中找到）
+                                            <br>→ 粘贴复制的内容
+                                            <br>→ 按 Cmd+S 保存，导航到 <code>team-memory/research/companies</code>
+                                            <br>→ 文件名输入 <code>企业名.md</code>（如 <code>摩尔芯光.md</code>）
+                                            <br>→ 如果提示使用 .txt 还是 .md，选择"使用 .md"
+                                        </li>
+                                        <li style="margin-top: 10px;"><strong>方法2：使用 VSCode</strong>
+                                            <br>→ 在 VSCode 中打开 <code>team-memory</code> 文件夹
+                                            <br>→ 右键 <code>research/companies</code> → New File
+                                            <br>→ 输入 <code>企业名.md</code>，粘贴内容并保存
+                                        </li>
+                                        <li style="margin-top: 10px;"><strong>方法3：使用终端命令</strong>
+                                            <br>→ 打开终端，输入：<code>cd ~/Desktop/team-memory/research/companies</code>
+                                            <br>→ 输入：<code>touch 企业名.md</code>
+                                            <br>→ 用文本编辑器打开这个文件，粘贴内容并保存
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><strong>更新索引</strong>：
+                                    <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
+                                        <li>打开"终端"应用（启动台 → 实用工具 → 终端）</li>
+                                        <li>输入：<code>cd ~/Desktop/team-memory</code>（或你的实际路径）</li>
+                                        <li>输入：<code>python3 scripts/update-index.py</code></li>
+                                    </ul>
+                                </li>
+                                <li><strong>提交到 GitHub</strong>：在终端依次输入：
+                                    <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
+                                        <li><code>git add .</code></li>
+                                        <li><code>git commit -m "feat: 添加XXX调研记录"</code>（XXX改为企业名）</li>
+                                        <li><code>git push</code></li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
                 </div>
             </div>
         </div>
