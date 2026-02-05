@@ -551,7 +551,15 @@
                     document.getElementById('loading').innerHTML = `<div class="error-message">加载失败: ${error.message}</div>`;
                 });
         } else {
-            document.getElementById('loading').innerHTML = '<div class="error-message">错误：未指定文件路径</div>';
+            // 新建模式：显示空表单
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+
+            // 更新页面标题提示
+            const formTitle = document.querySelector('h1');
+            if (formTitle) {
+                formTitle.innerHTML = '📝 新建调研记录 <span style="font-size: 0.5em; color: #4CAF50;">（在线模式）</span>';
+            }
         }
 
         // 解析Markdown并填充表单
@@ -1114,7 +1122,17 @@ ${v.nextSteps}
         };
 
         window.getFilename = function() {
-            return originalFileName;
+            // 如果是编辑模式，返回原文件名
+            if (originalFileName) {
+                return originalFileName;
+            }
+
+            // 新建模式：根据企业名称生成文件名
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                throw new Error('请填写企业名称');
+            }
+            return `${name}.md`;
         };
 
         // 通用复制函数（带备用方案）
