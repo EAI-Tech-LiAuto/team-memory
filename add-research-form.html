@@ -279,12 +279,37 @@
                 <div class="instructions">
                     <h4>📝 如何使用：</h4>
                     <ol>
-                        <li>点击上方"复制到剪贴板"按钮</li>
-                        <li>在本地创建文件：<code>research/[类型]/[名称].md</code></li>
-                        <li>粘贴复制的内容并保存</li>
-                        <li>运行命令：<code>python3 scripts/update-index.py</code></li>
-                        <li>提交到 Git：<code>git add . && git commit -m "feat: 添加调研记录" && git push</code></li>
+                        <li><strong>复制内容</strong>：点击上方"📋 复制到剪贴板"按钮</li>
+                        <li><strong>创建文件</strong>：
+                            <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
+                                <li>打开 Finder（访达），找到 <code>team-memory</code> 文件夹</li>
+                                <li>进入 <code>research</code> 文件夹</li>
+                                <li>根据企业类型进入对应文件夹（如 <code>companies</code>）</li>
+                                <li>创建新的 <code>.md</code> 文件，文件名为企业名称（如 <code>摩尔芯光.md</code>）</li>
+                                <li><strong>提示</strong>：可以右键 → 新建文本文件，然后改扩展名为 <code>.md</code></li>
+                            </ul>
+                        </li>
+                        <li><strong>粘贴内容</strong>：用文本编辑器打开刚创建的文件，粘贴（Cmd+V）复制的内容并保存</li>
+                        <li><strong>更新索引</strong>：
+                            <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
+                                <li>打开"终端"应用（在启动台或应用程序/实用工具中）</li>
+                                <li>输入：<code>cd ~/Desktop/team-memory</code>（或你存放的位置）然后按回车</li>
+                                <li>输入：<code>python3 scripts/update-index.py</code> 然后按回车</li>
+                            </ul>
+                        </li>
+                        <li><strong>提交到 GitHub</strong>：在终端依次输入：
+                            <ul style="margin-top: 8px; color: #666; font-size: 0.95em;">
+                                <li><code>git add .</code></li>
+                                <li><code>git commit -m "feat: 添加XXX调研记录"</code>（XXX改为企业名）</li>
+                                <li><code>git push</code></li>
+                            </ul>
+                        </li>
                     </ol>
+
+                    <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
+                        <strong>💡 更简单的方法：</strong><br>
+                        如果觉得上述步骤复杂，可以使用 <a href="edit-research.html" style="color: #667eea; font-weight: bold;">在线编辑器</a>，无需手动创建文件和运行命令！
+                    </div>
                 </div>
             </div>
         </div>
