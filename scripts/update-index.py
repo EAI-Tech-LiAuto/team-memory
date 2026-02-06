@@ -281,11 +281,11 @@ def update_index_html(base_path, conversations, research_items):
         research_replacement = rf'\g<1>\n{research_cards_html}\n                \g<3>'
         html_content = re.sub(research_pattern, research_replacement, html_content, flags=re.DOTALL, count=1)
     elif research_items:
-        # 如果不存在但有调研数据，自动创建调研部分
+        # 如果不存在但有调研数据，自动创建调研部分（带id属性）
         # 在"最新对话"部分后插入
         insert_pattern = r'(</div>\s*</div>\s*<div class="section">\s*<h2 class="section-title">⏱️ 时间线</h2>)'
         research_section = f'''
-            <div class="section">
+            <div class="section" id="research">
                 <h2 class="section-title">🏢 企业调研</h2>
                 <div class="research-cards">
 {research_cards_html}
