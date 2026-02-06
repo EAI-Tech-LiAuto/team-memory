@@ -327,8 +327,18 @@ git push</pre>
 
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
     <script>
-        const VIEWER_VERSION = 'v1.4'; // 版本号，用于调试 - 新增：编辑按钮功能
+        const VIEWER_VERSION = 'v1.5'; // 版本号，用于调试 - 修复：支持markdown段落换行
         let currentFilePath = ''; // 存储当前文件路径
+
+        // 配置marked.js以支持更好的换行渲染
+        if (typeof marked !== 'undefined') {
+            marked.setOptions({
+                breaks: true,  // 单个换行符转换为<br>
+                gfm: true,     // 启用GitHub风格的markdown
+                headerIds: true,
+                mangle: false
+            });
+        }
 
         // 显示编辑弹窗或跳转到编辑页面
         function showEditModal() {
