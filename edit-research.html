@@ -593,8 +593,16 @@
 
             // 填充标签
             if (Array.isArray(metadata.tags)) {
-                tags = metadata.tags;
+                // 过滤空字符串
+                tags = metadata.tags.filter(t => t && t.trim());
                 renderTags();
+            } else if (metadata.tags) {
+                // 如果tags是字符串，尝试解析
+                const tagStr = metadata.tags.toString();
+                if (tagStr !== '[]' && tagStr !== '') {
+                    tags = tagStr.split(',').map(t => t.trim()).filter(t => t);
+                    renderTags();
+                }
             }
 
             // 解析正文内容
@@ -650,9 +658,15 @@
             if (tableMatch) {
                 const rows = tableMatch[1].trim().split('\n');
                 rows.forEach(row => {
-                    const cells = row.split('|').map(c => c.trim()).filter(c => c);
+                    // 不要filter掉空单元格，保留所有列
+                    const cells = row.split('|').map(c => c.trim());
+                    // 去掉首尾的空字符串（由于 |开头和结尾| 导致）
+                    if (cells.length > 0 && cells[0] === '') cells.shift();
+                    if (cells.length > 0 && cells[cells.length-1] === '') cells.pop();
+
+                    // 只要第一列（姓名）有值，就添加这一行
                     if (cells.length >= 4 && cells[0]) {
-                        addContactRow(cells[0], cells[1], cells[2], cells[3]);
+                        addContactRow(cells[0], cells[1] || '', cells[2] || '', cells[3] || '');
                     }
                 });
             }
@@ -669,10 +683,11 @@
                 const titleLine = lines[0].trim();
 
                 let visitDate = '', visitTitle = '';
-                const dateMatch = titleLine.match(/(\d{4}-\d{2}-\d{2})\s+(.+)/);
+                // 支持两种格式：1) YYYY-MM-DD Title  2) YYYY-MM-DD （标题为空）
+                const dateMatch = titleLine.match(/(\d{4}-\d{2}-\d{2})(?:\s+(.+))?/);
                 if (dateMatch) {
                     visitDate = dateMatch[1];
-                    visitTitle = dateMatch[2];
+                    visitTitle = dateMatch[2] || ''; // 标题可能为空
                 }
 
                 let participants = '', discussion = '', keyInfo = '', nextSteps = '';
@@ -680,16 +695,16 @@
                 const participantsMatch = visit.match(/\*\*参与人员\*\*:\s*(.+)/);
                 if (participantsMatch) participants = participantsMatch[1].trim();
 
-                const discussionMatch = visit.match(/\*\*讨论内容\*\*:\s*\n([\s\S]+?)(?=\*\*关键信息|$)/);
+                const discussionMatch = visit.match(/\*\*讨论内容\*\*:\s*\n([\s\S]+?)(?=\n\*\*关键信息|$)/);
                 if (discussionMatch) discussion = discussionMatch[1].trim();
 
-                const keyInfoMatch = visit.match(/\*\*关键信息\*\*:\s*\n([\s\S]+?)(?=\*\*后续计划|$)/);
+                const keyInfoMatch = visit.match(/\*\*关键信息\*\*:\s*\n([\s\S]+?)(?=\n\*\*后续计划|$)/);
                 if (keyInfoMatch) keyInfo = keyInfoMatch[1].trim();
 
-                const nextStepsMatch = visit.match(/\*\*后续计划\*\*:\s*\n([\s\S]+?)(?=###|$)/);
+                const nextStepsMatch = visit.match(/\*\*后续计划\*\*:\s*\n([\s\S]+?)(?=\n###|$)/);
                 if (nextStepsMatch) nextSteps = nextStepsMatch[1].trim();
 
-                if (visitDate || visitTitle) {
+                if (visitDate) {
                     addVisitRecord(visitDate, visitTitle, participants, discussion, keyInfo, nextSteps);
                 }
             });
