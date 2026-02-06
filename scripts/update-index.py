@@ -179,24 +179,30 @@ def generate_research_card_html(item):
         f'<span class="tag">{tag}</span>' for tag in item['tags']
     ])
 
-    status_badge = f'<span class="status-badge status-{item["status"]}">{item["status"]}</span>' if item.get('status') else ''
-    location_text = f'📍 {item["location"]}' if item.get('location') else ''
+    # 状态映射
+    status_map = {
+        '已接洽': ('status-contacted', '✅ 已接洽'),
+        '初步接触': ('status-initial', '🔵 初步接触'),
+        '待跟进': ('status-pending', '⏳ 待跟进'),
+        '已合作': ('status-partner', '🤝 已合作')
+    }
+    status_class, status_text = status_map.get(item.get('status', ''), ('', ''))
+    status_html = f'<span class="card-status {status_class}">{status_text}</span>' if status_text else ''
 
-    return f'''                    <div class="research-card" data-type="{item['type']}" data-location="{item.get('location', '')}" data-status="{item.get('status', '')}" onclick="window.open('viewer.html?file=./{item['path']}')">
+    return f'''                    <div class="research-card" data-type="{item['type']}" data-status="{item.get('status', '')}" onclick="window.open('viewer.html?file=./{item['path']}')">
                         <div class="card-header">
-                            <div class="card-title">{item['type_icon']} {item['name']}</div>
+                            <div class="card-title">{item['name']}</div>
                             <div class="card-date">{item['date']}</div>
                         </div>
                         <div class="card-meta">
-                            <div class="research-type">{item['type']}</div>
-                            <div class="research-location">{location_text}</div>
-                            {status_badge}
+                            <span class="card-location">📍 {item.get('location', '未知')}</span>
+                            <span class="card-type">🏷️ {item['type']}</span>
                         </div>
                         <div class="card-tags">
                             {tags_html}
                         </div>
-                        <div class="card-summary">
-                            {item['summary']}
+                        <div class="card-footer">
+                            {status_html}
                         </div>
                     </div>
 '''
@@ -265,11 +271,30 @@ def update_index_html(base_path, conversations, research_items):
     # 生成行业调研卡片
     research_cards_html = '\n'.join([generate_research_card_html(item) for item in research_items])
 
-    # 替换行业调研部分（如果存在）
-    research_pattern = r'(<h2 class="section-title">🔍 行业调研</h2>.*?<div class="research-cards">)(.*?)(</div>)'
+    # 处理企业调研部分
+    # 支持多种标题格式: 🔍 行业调研 或 🏢 企业调研
+    research_pattern = r'(<h2 class="section-title">(?:🔍 行业调研|🏢 企业调研)</h2>\s*<div class="research-cards">)(.*?)(</div>\s*</div>)'
+
     if re.search(research_pattern, html_content, flags=re.DOTALL):
+        # 如果存在调研部分，更新内容
         research_replacement = rf'\g<1>\n{research_cards_html}\n                \g<3>'
         html_content = re.sub(research_pattern, research_replacement, html_content, flags=re.DOTALL)
+    elif research_items:
+        # 如果不存在但有调研数据，自动创建调研部分
+        # 在"最新对话"部分后插入
+        insert_pattern = r'(</div>\s*</div>\s*<div class="section">\s*<h2 class="section-title">⏱️ 时间线</h2>)'
+        research_section = f'''
+            <div class="section">
+                <h2 class="section-title">🏢 企业调研</h2>
+                <div class="research-cards">
+{research_cards_html}
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">⏱️ 时间线</h2>'''
+
+        html_content = re.sub(insert_pattern, research_section, html_content, flags=re.DOTALL)
 
     # 生成时间线 - 修复：使用更保守的匹配，只替换timeline内容
     # 匹配: <div class="timeline">后的内容直到该div关闭之前
