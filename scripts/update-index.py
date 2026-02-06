@@ -273,12 +273,13 @@ def update_index_html(base_path, conversations, research_items):
 
     # 处理企业调研部分
     # 支持多种标题格式: 🔍 行业调研 或 🏢 企业调研
-    research_pattern = r'(<h2 class="section-title">(?:🔍 行业调研|🏢 企业调研)</h2>\s*<div class="research-cards">)(.*?)(</div>\s*</div>)'
+    # 修复：更准确的匹配模式，确保完整替换research-cards内容
+    research_pattern = r'(<h2 class="section-title">(?:🔍 行业调研|🏢 企业调研)</h2>\s*<div class="research-cards">)(.*?)(</div>\s*</div>\s*\n\s*<div class="section">)'
 
     if re.search(research_pattern, html_content, flags=re.DOTALL):
         # 如果存在调研部分，更新内容
         research_replacement = rf'\g<1>\n{research_cards_html}\n                \g<3>'
-        html_content = re.sub(research_pattern, research_replacement, html_content, flags=re.DOTALL)
+        html_content = re.sub(research_pattern, research_replacement, html_content, flags=re.DOTALL, count=1)
     elif research_items:
         # 如果不存在但有调研数据，自动创建调研部分
         # 在"最新对话"部分后插入
