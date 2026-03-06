@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团队共享记忆库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .guide-banner {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .guide-banner-text {
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .guide-banner-text h3 {
+            margin-bottom: 5px;
+            font-size: 1.3em;
+        }
+
+        .guide-banner-text p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .guide-button {
+            background: white;
+            color: #4CAF50;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .guide-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 6px;
+            height: 30px;
+            background: #667eea;
+            margin-right: 15px;
+            border-radius: 3px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .card-date {
+            color: #999;
+            font-size: 0.9em;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .card-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-author::before {
+            content: '👤';
+            margin-right: 5px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .card-summary {
+            color: #666;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-link {
+            display: block;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .quick-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* 行业调研模块样式 */
+        .research-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+
+        .research-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .research-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .research-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .research-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .research-location {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-已接洽 {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-待跟进 {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-持续关注 {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 团队共享知识库</h1>
+            <p>人形机器人项目 · 团队智慧沉淀中心</p>
+        </div>
+
+        <div class="guide-banner">
+            <div class="guide-banner-text">
+                <h3>🚀 第一次使用？</h3>
+                <p>在线访问或本地使用，两种方式任你选择</p>
+            </div>
+            <a href="guide.html" class="guide-button">⚡ 3分钟快速上手</a>
+            <a href="AI助手使用指南.md" class="guide-button">🤖 AI助手使用指南</a>
+            <a href="使用指南-在线和本地.md" class="guide-button">🌐 在线&本地使用指南</a>
+            <a href="新手指南.md" class="guide-button">📖 超详细新手指南</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card" onclick="scrollToSection('conversations')">
+                <div class="stat-number">4</div>
+                <div class="stat-label">对话记录</div>
+            </div>
+            <div class="stat-card" onclick="scrollToSection('topics')">
+                <div class="stat-number">5</div>
+                <div class="stat-label">主题文档</div>
+            </div>
+            <div class="stat-card" onclick="scrollToSection('research')">
+                <div class="stat-number">2</div>
+                <div class="stat-label">行业调研</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">贡献者</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <input type="text" class="search-box" placeholder="🔍 搜索对话、主题、标签...">
+
+            <div class="section">
+                <h2 class="section-title">📱 快速导航</h2>
+                <div class="quick-links">
+                    <a href="edit-research.html" class="quick-link" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">➕ 添加调研记录</a>
+                    <a href="https://li.feishu.cn/wiki/JrbZwUDn1i0IOHkeZYec7Ycrngh" class="quick-link" target="_blank" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);">📥 信息输入</a>
+                    <a href="viewer.html?file=./topics/scenarios/README.md" class="quick-link">🏠 应用场景</a>
+                    <a href="viewer.html?file=./topics/产品规划/README.md" class="quick-link">📊 产品规划</a>
+                    <a href="viewer.html?file=./topics/技术方案/README.md" class="quick-link">🔧 技术方案</a>
+                    <a href="viewer.html?file=./topics/供应链/README.md" class="quick-link">🔗 供应链</a>
+                    <a href="viewer.html?file=./decisions/README.md" class="quick-link">📋 决策记录</a>
+                </div>
+            </div>
+
+            <div class="section" id="conversations">
+                <h2 class="section-title">🆕 最新对话</h2>
+                <div class="cards">
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/家用机器人问卷.md')">
+                        <div class="card-header">
+                            <div class="card-title">家用机器人问卷</div>
+                            <div class="card-date">2026-01-29</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">李君</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">research</span>
+                            <span class="tag">robotics</span>
+                        </div>
+                        <div class="card-summary">
+                            家用机器人相关问卷讨论 尊敬的参与者： 您好！本问卷旨在了解您对家用机器人的需求、偏好及使用场景，以便为未来产品开发提供参考。您的意见对我们至关重要，问卷大约需要5-10分钟完成。所有数据将匿名处理，仅用于研究目的。 --- **1. 您的性别是？** - [ ] 男 - [ ] 女 - [ ] 其...
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/home-robot-industry-analysis.md')">
+                        <div class="card-header">
+                            <div class="card-title">家用机器人全球领先企业分析</div>
+                            <div class="card-date">2026-01-28</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">zhujunrong</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">机器人</span>
+                            <span class="tag">具身智能</span>
+                            <span class="tag">产业研究</span>
+                            <span class="tag">商业化</span>
+                            <span class="tag">技术路线</span>
+                        </div>
+                        <div class="card-summary">
+                            本文档分析截至2025年1月全球领先的家用/人形机器人企业，涵盖技术路线、产品形态、融资情况、供应链策略和商业化模式。 1. **Boston Dynamics**（美国）- 运动控制技术最强 2. **1X Technologies**（挪威）- 家用场景聚焦 3. **Figure AI**（美...
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/家用及工厂机器人差异.md')">
+                        <div class="card-header">
+                            <div class="card-title">家用及工厂机器人差异</div>
+                            <div class="card-date">2026-01-28</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">zhujunrong</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">机器人</span>
+                            <span class="tag">人形机器人</span>
+                            <span class="tag">工业机器人</span>
+                            <span class="tag">技术调研</span>
+                            <span class="tag">产品分析</span>
+                        </div>
+                        <div class="card-summary">
+                            对家用人形机器人和工厂机器人的核心产品和技术差异进行全面调研分析，明确两类机器人在应用场景、技术架构、产品形态、商业化路径等方面的本质区别。
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/home-service-robot-research.md')">
+                        <div class="card-header">
+                            <div class="card-title">家政机器人项目研究计划</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">李君</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">home-service</span>
+                            <span class="tag">robotics</span>
+                            <span class="tag">product-planning</span>
+                            <span class="tag">technical-research</span>
+                        </div>
+                        <div class="card-summary">
+                            基于理想汽车人形机器人项目的两个月工作计划，结合家政机器人的实际应用场景，制定针对性的研究和开发策略。目标是设计一款能够在家庭环境中辅助日常家务、照护家人的智能机器人产品。
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/home-robot-one-month-plan.md')" style="display: none;" data-filtered-author="郎咸朋">
+                        <div class="card-header">
+                            <div class="card-title">家用人形机器人1个月工作计划（纯家用场景）</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">朱俊蓉</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">home-service</span>
+                            <span class="tag">product-planning</span>
+                            <span class="tag">user-research</span>
+                            <span class="tag">market-validation</span>
+                            <span class="tag">one-month</span>
+                        </div>
+                        <div class="card-summary">
+                            **项目负责人:** 郎咸朋 **制定日期:** 2026年1月27日 **核心目标:** 聚焦家用人形机器人赛道，完成市场验证、技术路线确认、商业计划制定 --- **团队规模:** 5-6人精简配置 **职责:** - 用户需求挖掘与深度访谈 - 竞品分析与市场规模测算 - 商业模式设计与定价策...
+                        </div>
+                    </div>
+
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/one-month-accelerated-plan.md')" style="display: none;" data-filtered-author="郎博">
+                        <div class="card-header">
+                            <div class="card-title">人形机器人1个月加速计划（工业+家用双场景）</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">郎博</div>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">product-planning</span>
+                            <span class="tag">dual-scenarios</span>
+                            <span class="tag">industrial</span>
+                            <span class="tag">home-service</span>
+                            <span class="tag">accelerated-timeline</span>
+                        </div>
+                        <div class="card-summary">
+                            | 维度 | 原计划 | 新计划 | |------|--------|--------| | **时间周期** | 8周（2个月） | **4周（1个月）** | | **目标场景** | 工业场景为主 | **工业+家用服务双场景** | | **交付成果** | 80-100页详细商业计划书 ...
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="section" id="research">
+                <h2 class="section-title">🏢 企业调研</h2>
+                <div class="research-cards">
+                    <div class="research-card" data-type="企业" data-status="已接洽" onclick="window.open('viewer.html?file=./research/companies/摩尔芯光.md')">
+                        <div class="card-header">
+                            <div class="card-title">摩尔芯光</div>
+                            <div class="card-date">2026-02-05</div>
+                        </div>
+                        <div class="card-meta">
+                            <span class="card-location">📍 北京市</span>
+                            <span class="card-type">🏷️ 企业</span>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">FMCW</span>
+                            <span class="tag">激光雷达</span>
+                            <span class="tag">系统</span>
+                            <span class="tag">芯片</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-status status-contacted">✅ 已接洽</span>
+                        </div>
+                    </div>
+
+                    <div class="research-card" data-type="企业" data-status="已接洽" onclick="window.open('viewer.html?file=./research/companies/深圳市高工智能咨询有限公司.md')">
+                        <div class="card-header">
+                            <div class="card-title">深圳市高工智能咨询有限公司</div>
+                            <div class="card-date">2026-02-03</div>
+                        </div>
+                        <div class="card-meta">
+                            <span class="card-location">📍 深圳市</span>
+                            <span class="card-type">🏷️ 企业</span>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">智能网联汽车</span>
+                            <span class="tag">产业研究</span>
+                            <span class="tag">咨询</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-status status-contacted">✅ 已接洽</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">⏱️ 时间线</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">家用机器人问卷</div>
+                            <div class="card-date">2026-01-29</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">李君</div>
+                        </div>
+                        <div class="card-summary">
+                            家用机器人相关问卷讨论 尊敬的参与者： 您好！本问卷旨在了解您对家用机器人的需求、偏好及使用场景，以便为未来产品开发提供参考。您的意见对我们至关重要，问卷大约需要5-10分钟完成。所有数据将匿名处理，仅用于研究目的。 --- **1. 您的性别是？** - [ ] 男 - [ ] 女 - [ ] 其...
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">家用机器人全球领先企业分析</div>
+                            <div class="card-date">2026-01-28</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">zhujunrong</div>
+                        </div>
+                        <div class="card-summary">
+                            本文档分析截至2025年1月全球领先的家用/人形机器人企业，涵盖技术路线、产品形态、融资情况、供应链策略和商业化模式。 1. **Boston Dynamics**（美国）- 运动控制技术最强 2. **1X Technologies**（挪威）- 家用场景聚焦 3. **Figure AI**（美...
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">家用及工厂机器人差异</div>
+                            <div class="card-date">2026-01-28</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">zhujunrong</div>
+                        </div>
+                        <div class="card-summary">
+                            对家用人形机器人和工厂机器人的核心产品和技术差异进行全面调研分析，明确两类机器人在应用场景、技术架构、产品形态、商业化路径等方面的本质区别。
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="card-header">
+                            <div class="card-title">家政机器人项目研究计划</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">李君</div>
+                        </div>
+                        <div class="card-summary">
+                            基于理想汽车人形机器人项目的两个月工作计划，结合家政机器人的实际应用场景，制定针对性的研究和开发策略。目标是设计一款能够在家庭环境中辅助日常家务、照护家人的智能机器人产品。
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" style="display: none;" data-filtered-author="郎咸朋">
+                        <div class="card-header">
+                            <div class="card-title">家用人形机器人1个月工作计划（纯家用场景）</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">朱俊蓉</div>
+                        </div>
+                        <div class="card-summary">
+                            **项目负责人:** 郎咸朋 **制定日期:** 2026年1月27日 **核心目标:** 聚焦家用人形机器人赛道，完成市场验证、技术路线确认、商业计划制定 --- **团队规模:** 5-6人精简配置 **职责:** - 用户需求挖掘与深度访谈 - 竞品分析与市场规模测算 - 商业模式设计与定价策...
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" style="display: none;" data-filtered-author="郎博">
+                        <div class="card-header">
+                            <div class="card-title">人形机器人1个月加速计划（工业+家用双场景）</div>
+                            <div class="card-date">2026-01-27</div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-author">郎博</div>
+                        </div>
+                        <div class="card-summary">
+                            | 维度 | 原计划 | 新计划 | |------|--------|--------| | **时间周期** | 8周（2个月） | **4周（1个月）** | | **目标场景** | 工业场景为主 | **工业+家用服务双场景** | | **交付成果** | 80-100页详细商业计划书 ...
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🤖 团队共享知识库 - 让知识流动起来</p>
+            <div class="footer-links">
+                <a href="./CLAUDE.md">使用指南</a>
+                <a href="https://github.com/your-org/team-memory" target="_blank">GitHub仓库</a>
+                <a href="./scripts/capture.bat">快速捕获脚本</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                💡 提示: 使用 <code>./scripts/capture.bat topic-name</code> 快速创建新对话记录
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 内容过滤配置（可以在这里添加需要隐藏的关键词）
+        const HIDDEN_KEYWORDS = ['郎博', '郎咸朋'];
+
+        // 页面加载时自动隐藏包含特定关键词的内容
+        function applyContentFilter() {
+            const allCards = document.querySelectorAll('.card, .timeline-item, .research-card');
+            let hiddenCount = 0;
+
+            allCards.forEach(card => {
+                const cardText = card.textContent;
+                const shouldHide = HIDDEN_KEYWORDS.some(keyword => cardText.includes(keyword));
+
+                if (shouldHide) {
+                    card.style.display = 'none';
+                    card.setAttribute('data-filtered', 'true');
+                    hiddenCount++;
+                }
+            });
+
+            console.log(`已隐藏 ${hiddenCount} 个包含特定关键词的内容`);
+
+            // 更新统计卡片数字
+            updateStatCards();
+        }
+
+        // 更新统计卡片显示的数字
+        function updateStatCards() {
+            // 统计对话记录（.card 在 #conversations 中且未被过滤的）
+            const conversationCards = document.querySelectorAll('#conversations .card');
+            const visibleConversations = Array.from(conversationCards).filter(card =>
+                card.style.display !== 'none' && card.getAttribute('data-filtered') !== 'true'
+            ).length;
+
+            // 统计企业调研（.research-card 且未被过滤的）
+            const researchCards = document.querySelectorAll('.research-card');
+            const visibleResearch = Array.from(researchCards).filter(card =>
+                card.style.display !== 'none' && card.getAttribute('data-filtered') !== 'true'
+            ).length;
+
+            // 更新显示
+            const statCards = document.querySelectorAll('.stat-card .stat-number');
+            if (statCards[0]) statCards[0].textContent = visibleConversations; // 对话记录
+            if (statCards[2]) statCards[2].textContent = visibleResearch; // 行业调研
+
+            console.log(`统计更新: 对话记录 ${visibleConversations} 篇, 行业调研 ${visibleResearch} 篇`);
+        }
+
+        // 页面加载完成后立即执行过滤
+        document.addEventListener('DOMContentLoaded', applyContentFilter);
+        // 保险起见，也在window.onload时执行一次
+        window.addEventListener('load', applyContentFilter);
+
+        // 搜索功能（修改：只搜索未被过滤的卡片）
+        document.querySelector('.search-box').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                // 如果卡片已被过滤（包含隐藏关键词），不显示
+                if (card.getAttribute('data-filtered') === 'true') {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 卡片点击效果
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.animation = 'pulse 0.3s ease';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 300);
+            });
+        });
+
+        // 行业调研筛选功能（修改：考虑内容过滤）
+        function filterResearch() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const cards = document.querySelectorAll('.research-card');
+
+            cards.forEach(card => {
+                // 如果卡片已被过滤（包含隐藏关键词），不显示
+                if (card.getAttribute('data-filtered') === 'true') {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                const cardType = card.getAttribute('data-type');
+                const cardStatus = card.getAttribute('data-status');
+
+                const typeMatch = typeFilter === 'all' || cardType === typeFilter;
+                const statusMatch = statusFilter === 'all' || cardStatus === statusFilter;
+
+                if (typeMatch && statusMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // 滚动到指定section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
+
+    <!-- AI助手 -->
+    <script src="./scripts/groq-api.js"></script>
+    <script src="./scripts/knowledge-base.js"></script>
+    <script src="./scripts/chat-assistant.js"></script>
+</body>
+</html>
