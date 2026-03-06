@@ -438,7 +438,7 @@
 
         <div class="stats">
             <div class="stat-card" onclick="scrollToSection('conversations')">
-                <div class="stat-number">6</div>
+                <div class="stat-number">4</div>
                 <div class="stat-label">对话记录</div>
             </div>
             <div class="stat-card" onclick="scrollToSection('topics')">
@@ -550,7 +550,7 @@
                         </div>
                     </div>
 
-                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/home-robot-one-month-plan.md')">
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/home-robot-one-month-plan.md')" style="display: none;" data-filtered-author="郎咸朋">
                         <div class="card-header">
                             <div class="card-title">家用人形机器人1个月工作计划（纯家用场景）</div>
                             <div class="card-date">2026-01-27</div>
@@ -570,7 +570,7 @@
                         </div>
                     </div>
 
-                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/one-month-accelerated-plan.md')">
+                    <div class="card" onclick="window.open('viewer.html?file=./conversations/2026-01/one-month-accelerated-plan.md')" style="display: none;" data-filtered-author="郎博">
                         <div class="card-header">
                             <div class="card-title">人形机器人1个月加速计划（工业+家用双场景）</div>
                             <div class="card-date">2026-01-27</div>
@@ -693,7 +693,7 @@
                         </div>
                     </div>
 
-                    <div class="timeline-item">
+                    <div class="timeline-item" style="display: none;" data-filtered-author="郎咸朋">
                         <div class="card-header">
                             <div class="card-title">家用人形机器人1个月工作计划（纯家用场景）</div>
                             <div class="card-date">2026-01-27</div>
@@ -706,7 +706,7 @@
                         </div>
                     </div>
 
-                    <div class="timeline-item">
+                    <div class="timeline-item" style="display: none;" data-filtered-author="郎博">
                         <div class="card-header">
                             <div class="card-title">人形机器人1个月加速计划（工业+家用双场景）</div>
                             <div class="card-date">2026-01-27</div>
@@ -737,12 +737,70 @@
     </div>
 
     <script>
-        // 搜索功能
+        // 内容过滤配置（可以在这里添加需要隐藏的关键词）
+        const HIDDEN_KEYWORDS = ['郎博', '郎咸朋'];
+
+        // 页面加载时自动隐藏包含特定关键词的内容
+        function applyContentFilter() {
+            const allCards = document.querySelectorAll('.card, .timeline-item, .research-card');
+            let hiddenCount = 0;
+
+            allCards.forEach(card => {
+                const cardText = card.textContent;
+                const shouldHide = HIDDEN_KEYWORDS.some(keyword => cardText.includes(keyword));
+
+                if (shouldHide) {
+                    card.style.display = 'none';
+                    card.setAttribute('data-filtered', 'true');
+                    hiddenCount++;
+                }
+            });
+
+            console.log(`已隐藏 ${hiddenCount} 个包含特定关键词的内容`);
+
+            // 更新统计卡片数字
+            updateStatCards();
+        }
+
+        // 更新统计卡片显示的数字
+        function updateStatCards() {
+            // 统计对话记录（.card 在 #conversations 中且未被过滤的）
+            const conversationCards = document.querySelectorAll('#conversations .card');
+            const visibleConversations = Array.from(conversationCards).filter(card =>
+                card.style.display !== 'none' && card.getAttribute('data-filtered') !== 'true'
+            ).length;
+
+            // 统计企业调研（.research-card 且未被过滤的）
+            const researchCards = document.querySelectorAll('.research-card');
+            const visibleResearch = Array.from(researchCards).filter(card =>
+                card.style.display !== 'none' && card.getAttribute('data-filtered') !== 'true'
+            ).length;
+
+            // 更新显示
+            const statCards = document.querySelectorAll('.stat-card .stat-number');
+            if (statCards[0]) statCards[0].textContent = visibleConversations; // 对话记录
+            if (statCards[2]) statCards[2].textContent = visibleResearch; // 行业调研
+
+            console.log(`统计更新: 对话记录 ${visibleConversations} 篇, 行业调研 ${visibleResearch} 篇`);
+        }
+
+        // 页面加载完成后立即执行过滤
+        document.addEventListener('DOMContentLoaded', applyContentFilter);
+        // 保险起见，也在window.onload时执行一次
+        window.addEventListener('load', applyContentFilter);
+
+        // 搜索功能（修改：只搜索未被过滤的卡片）
         document.querySelector('.search-box').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const cards = document.querySelectorAll('.card');
 
             cards.forEach(card => {
+                // 如果卡片已被过滤（包含隐藏关键词），不显示
+                if (card.getAttribute('data-filtered') === 'true') {
+                    card.style.display = 'none';
+                    return;
+                }
+
                 const text = card.textContent.toLowerCase();
                 if (text.includes(searchTerm)) {
                     card.style.display = 'block';
@@ -762,13 +820,19 @@
             });
         });
 
-        // 行业调研筛选功能
+        // 行业调研筛选功能（修改：考虑内容过滤）
         function filterResearch() {
             const typeFilter = document.getElementById('typeFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
             const cards = document.querySelectorAll('.research-card');
 
             cards.forEach(card => {
+                // 如果卡片已被过滤（包含隐藏关键词），不显示
+                if (card.getAttribute('data-filtered') === 'true') {
+                    card.style.display = 'none';
+                    return;
+                }
+
                 const cardType = card.getAttribute('data-type');
                 const cardStatus = card.getAttribute('data-status');
 
